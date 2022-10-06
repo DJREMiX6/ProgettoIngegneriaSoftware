@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProgettoIngegneriaSoftware.Models.DB_Models.Autentication;
 
 namespace ProgettoIngegneriaSoftware.Models
 {
@@ -7,6 +8,8 @@ namespace ProgettoIngegneriaSoftware.Models
         public AutenticationDbContext(DbContextOptions<AutenticationDbContext> options) : base(options)
         { }
 
+        public DbSet<UserModel> Users { get; set; }
+        public DbSet<LoginTokenModel> LoginTokens { get; set; }
 
     }
 }

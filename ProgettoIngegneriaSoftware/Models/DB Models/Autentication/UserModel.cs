@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ProgettoIngegneriaSoftware.Models.DB_Models
+namespace ProgettoIngegneriaSoftware.Models.DB_Models.Autentication
 {
     public class UserModel
     {
