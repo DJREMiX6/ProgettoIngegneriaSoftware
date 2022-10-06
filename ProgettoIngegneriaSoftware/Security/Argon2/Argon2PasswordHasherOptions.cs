@@ -14,14 +14,14 @@ namespace ProgettoIngegneriaSoftware.Security.Argon2
 
         #region DI READONLY FIELDS
 
-        private readonly ILogger _logger;
+        private readonly ILogger<Argon2PasswordHasherOptions> _logger;
         private readonly IConfiguration _configuration;
 
         #endregion DI READONLY FIELDS
 
         #region CTORS
 
-        public Argon2PasswordHasherOptions(ILogger logger, IConfiguration configuration)
+        public Argon2PasswordHasherOptions(ILogger<Argon2PasswordHasherOptions> logger, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;

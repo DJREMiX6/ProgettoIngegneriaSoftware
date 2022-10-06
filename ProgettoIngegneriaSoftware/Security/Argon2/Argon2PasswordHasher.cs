@@ -10,18 +10,16 @@ namespace ProgettoIngegneriaSoftware.Security.Argon2
 
         #region DI READONLY FIELDS
 
-        private readonly ILogger _logger;
-        private readonly IConfiguration _configuration;
+        private readonly ILogger<Argon2PasswordHasher> _logger;
         private readonly IPasswordHasherOptions _passwordHasherOptions;
 
         #endregion DI READONLY FIELDS
 
         #region CTORS
 
-        public Argon2PasswordHasher(ILogger logger, IConfiguration configuration, IPasswordHasherOptions passwordHasherOptions)
+        public Argon2PasswordHasher(ILogger<Argon2PasswordHasher> logger, IPasswordHasherOptions passwordHasherOptions)
         {
             _logger = logger;
-            _configuration = configuration;
             _passwordHasherOptions = passwordHasherOptions;
         }
 
@@ -83,11 +81,7 @@ namespace ProgettoIngegneriaSoftware.Security.Argon2
                         : Encoding.UTF8.GetBytes(_passwordHasherOptions.GetKnownSecretOption());
                 }
 
-                return new HashResult()
-                {
-                    Hash = argon2id.GetBytes(128),
-                    Salt = saltBytes
-                };
+                return new HashResult(argon2id.GetBytes(128), saltBytes);
             }
             catch (Exception ex)
             {
