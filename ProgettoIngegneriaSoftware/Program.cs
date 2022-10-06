@@ -2,7 +2,6 @@ using Serilog;
 using Serilog.Events;
 using Microsoft.EntityFrameworkCore;
 using ProgettoIngegneriaSoftware.Models;
-using ProgettoIngegneriaSoftware.Extensions;
 using ProgettoIngegneriaSoftware.Security;
 using ProgettoIngegneriaSoftware.Security.Argon2;
 
@@ -11,12 +10,13 @@ Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
     .WriteTo.Console()
     .WriteTo.File(".log")
-    .CreateLogger();
+    .CreateBootstrapLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.json");
 builder.Configuration.AddJsonFile("appsettings.development.json");
-builder.Logging.ClearProviders().AddSerilog();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationDefaultConnection")));
 builder.Services.AddDbContext<AutenticationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AutenticationDefaultConnection")));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
