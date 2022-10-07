@@ -5,6 +5,8 @@ namespace ProgettoIngegneriaSoftware.Models.DB_Models.Autentication
     public class LoginTokenModel
     {
 
+        public const int TOKEN_LENGTH = 255;
+
         [Key]
         [Required]
         public Guid Id { get; set; }
@@ -13,7 +15,7 @@ namespace ProgettoIngegneriaSoftware.Models.DB_Models.Autentication
         public UserModel User { get; set; }
 
         [Required]
-        [StringLength(255)]
+        [StringLength(TOKEN_LENGTH)]
         public string Token { get; set; }
 
         [Required]
@@ -21,6 +23,9 @@ namespace ProgettoIngegneriaSoftware.Models.DB_Models.Autentication
 
         [Required]
         public DateTime ExpirationDate { get; set; }
+
+        [Required]
+        public bool IsExpired { get; set; }
 
     }
 }

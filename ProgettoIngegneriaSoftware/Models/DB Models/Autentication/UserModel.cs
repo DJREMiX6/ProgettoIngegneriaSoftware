@@ -5,24 +5,29 @@ namespace ProgettoIngegneriaSoftware.Models.DB_Models.Autentication
     public class UserModel
     {
 
+        public const int USERNAME_LENGTH = 32;
+        public const int PASSWORD_HASH_LENGTH = 128;
+        public const int SALT_LENGTH = 32;
+        public const int EMAIL_LENGTH = 128;
+
         [Key]
         [Required]
         public Guid Id { get; set; }
 
         [Required]
-        [StringLength(32)]
+        [StringLength(USERNAME_LENGTH)]
         public string UserName { get; set; }
 
         [Required]
-        [MaxLength(128)]
-        public byte[] StoredPassword { get; set; }
+        [MaxLength(PASSWORD_HASH_LENGTH)]
+        public byte[] PasswordHash { get; set; }
 
         [Required]
-        [MaxLength(32)]
-        public byte[] StoredSalt { get; set; }
+        [MaxLength(SALT_LENGTH)]
+        public byte[] Salt { get; set; }
 
         [Required]
-        [StringLength(128)]
+        [StringLength(EMAIL_LENGTH)]
         public string Email { get; set; }
 
     }
