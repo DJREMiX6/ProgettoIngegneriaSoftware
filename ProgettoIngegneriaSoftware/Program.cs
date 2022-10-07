@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ProgettoIngegneriaSoftware.Models;
 using ProgettoIngegneriaSoftware.Security;
 using ProgettoIngegneriaSoftware.Security.Argon2;
+using ProgettoIngegneriaSoftware.Models.Tokenization;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
@@ -20,6 +21,7 @@ builder.Logging.AddSerilog();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationDefaultConnection")));
 builder.Services.AddDbContext<AutenticationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AutenticationDefaultConnection")));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddTransient<ITokenGenerator, TokenGenerator>();
 builder.Services.AddTransient<IPasswordHasher, Argon2PasswordHasher>();
 builder.Services.AddTransient<IPasswordHasherOptions, Argon2PasswordHasherOptions>();
 builder.Services.AddControllers();
