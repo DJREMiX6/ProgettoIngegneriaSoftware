@@ -1,6 +1,4 @@
-﻿using NuGet.Common;
-using System.Security.Cryptography;
-using System.Text;
+﻿using ProgettoIngegneriaSoftware.Utils.Random;
 
 namespace ProgettoIngegneriaSoftware.Models.Tokenization
 {
@@ -30,9 +28,7 @@ namespace ProgettoIngegneriaSoftware.Models.Tokenization
             {
                 throw new ArgumentException("length parameter is not valid.", nameof(length));
             }
-
-            var randomBytes = RandomNumberGenerator.GetBytes(length);
-            return Encoding.UTF8.GetString(randomBytes);
+            return RandomStringGenerator.Shared.RandomString(length);
         }
 
         #endregion ITokenGenerator IMPLEMENTATION
