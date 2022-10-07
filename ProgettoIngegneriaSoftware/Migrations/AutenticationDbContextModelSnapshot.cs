@@ -34,6 +34,9 @@ namespace ProgettoIngegneriaSoftware.Migrations
                     b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<bool>("IsExpired")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Token")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -60,12 +63,12 @@ namespace ProgettoIngegneriaSoftware.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<byte[]>("StoredPassword")
+                    b.Property<byte[]>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("varbinary(128)");
 
-                    b.Property<byte[]>("StoredSalt")
+                    b.Property<byte[]>("Salt")
                         .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("varbinary(32)");
