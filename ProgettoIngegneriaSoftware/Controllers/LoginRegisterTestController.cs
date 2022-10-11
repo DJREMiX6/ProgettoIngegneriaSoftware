@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProgettoIngegneriaSoftware.Models;
+using ProgettoIngegneriaSoftware.Models.ControllersModels;
 using ProgettoIngegneriaSoftware.Models.DB_Models.Autentication;
+using ProgettoIngegneriaSoftware.Models.HttpResponseObjects;
 using ProgettoIngegneriaSoftware.Models.Tokenization;
 using ProgettoIngegneriaSoftware.Security;
 using System.Text;
@@ -21,26 +23,17 @@ namespace ProgettoIngegneriaSoftware.Controllers
 
         #region PRIVATE READONLY DI FIELDS
 
-        private readonly AutenticationDbContext _autenticationDbContext;
         private readonly ILogger<LoginRegisterTestController> _logger;
-        private readonly IPasswordHasher _passwordHasher;
-        private readonly ITokenGenerator _tokenGenerator;
+        private readonly LoginRegisterTestModel _model;
 
         #endregion PRIVATE READONLY DI FIELDS
 
         #region CTORS
 
-        public LoginRegisterTestController(
-            AutenticationDbContext autenticationDbContext, 
-            ILogger<LoginRegisterTestController> logger,
-            IPasswordHasher passwordHasher,
-            ITokenGenerator tokenGenerator
-            )
+        public LoginRegisterTestController(ILogger<LoginRegisterTestController> logger, LoginRegisterTestModel model)
         {
-            _autenticationDbContext = autenticationDbContext;
             _logger = logger;
-            _passwordHasher = passwordHasher;
-            _tokenGenerator = tokenGenerator;
+            _model = model;
         }
 
         #endregion CTORS
@@ -51,32 +44,29 @@ namespace ProgettoIngegneriaSoftware.Controllers
         public async Task<IActionResult> Register([FromHeader]string email, [FromHeader]string username, [FromHeader]string password, [FromHeader]string confirmPassword)
         {
             //ERRORS HANDLING
-            if(!string.Equals(password, confirmPassword))
+            if(!_model.IsPasswordValid(password))
             {
-                return BadRequest(Json(new { error = "Fields password and confirmPassword are not equal." }));
+                return BadRequest(Json(new BadRequestData("Invalid password.")));
             }
-            if (await _autenticationDbContext.Users.FirstOrDefaultAsync(user => user.UserName.Equals(username)) != null)
+            if(!_model.IsPasswordEqualToConfirmPassword(password, confirmPassword))
             {
-                return BadRequest(Json(new { error = "Username already in use by another user." }));
+                return BadRequest(Json(new BadRequestData("Fields password and confirmPassword are not equal.")));
             }
-            if(await _autenticationDbContext.Users.FirstOrDefaultAsync(user => user.Email.Equals(email)) != null)
+            if (await _model.UserExistsByUsername(username))
             {
-                return BadRequest(Json(new { error = "Email already in use by another user." }));
+                return BadRequest(Json(new BadRequestData("Username already in use by another user.")));
+            }
+            if(await _model.UserExistsByEmail(email))
+            {
+                return BadRequest(Json(new BadRequestData("Email already in use by another user.")));
             }
 
             //New user creation and insertion into the database
-            HashResult hashResult = await _passwordHasher.HashPassword(password, null, true);
-            var newUser = new UserModel()
-            {
-                UserName = username,
-                PasswordHash = hashResult.Hash,
-                Salt = hashResult.Salt,
-                Email = email
-            };
+            _model.CreateNewUser(username, email, password);
             _logger.LogInformation("New User created.");
             await _autenticationDbContext.Users.AddAsync(newUser);
             await _autenticationDbContext.SaveChangesAsync();
-            return Ok(Json(new { message = "User registered." }));
+            return Ok(Json(new OkData("User registered.")));
         }
 
         [HttpPost("Login")]
