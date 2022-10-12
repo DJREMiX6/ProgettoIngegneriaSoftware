@@ -12,7 +12,6 @@ namespace ProgettoIngegneriaSoftware.Models.ControllersModels
         #region PRIVATE CONSTS
 
         private const int MINIMUM_PASSWORD_LENGTH = 8;
-        public static readonly char[] SPECIAL_CHARACTERS = new char[] { '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', '-', '/', '@', ':', ';', '<', '>', '?', '@', '\\', '[', ']', '^', '_' };
 
         #endregion PRIVATE CONSTS
 
@@ -44,13 +43,66 @@ namespace ProgettoIngegneriaSoftware.Models.ControllersModels
 
         #region PUBLIC METHODS
 
-        public bool IsPasswordValid(string password)
+        public bool IsPasswordValid(string password, string confirmPassword)
         {
             if(password.Length < MINIMUM_PASSWORD_LENGTH)
             {
                 return false;
             }
-            if(!password.Contains(SPECIAL_CHARACTERS))
+            if(password.Where(c => char.IsSymbol(c) || char.IsPunctuation(c)).Count() == 0)
+            {
+
+            }
+            if(password.Where(c => char.IsDigit(c)).Count() == 0)
+            {
+                return false;
+            }
+            if(password.Where(c => char.IsUpper(c)).Count() == 0)
+            {
+                return false;
+            }
+            if(password.Where(c => char.IsLower(c)).Count() == 0)
+            {
+                return false;
+            }
+            if(!IsPasswordEqualToConfirmPassword(password, confirmPassword))
+            {
+                return false;
+            }
+
+            return true;
+        }
+        public async Task<bool> IsPasswordValid(string password, UserModel user)
+        {
+            return await _passwordHasher.VerifyPassword(password, user.PasswordHash, user.Salt, true);
+        }
+
+        public async Task<bool> IsLoginTokenValid(string loginToken, string username)
+        {
+            if(loginToken.Trim().Equals(string.Empty))
+            {
+                return false;
+            }
+            var queryToken = await _autenticationDbContext.LoginTokens.FirstOrDefaultAsync(token => token.Token.Equals(loginToken));
+            if(queryToken is null)
+            {
+                return false;
+            }
+            var queryUser = await GetUserByUsername(username);
+            if(queryUser is null)
+            {
+                return false;
+            }
+            if(queryToken.User != queryUser)
+            {
+                return false;
+            }
+            if(((TimeSpan)(queryToken.ExpirationDate - DateTime.Now)).Milliseconds <= 0)
+            {
+                queryToken.IsExpired = true;
+                await _autenticationDbContext.SaveChangesAsync();
+            }
+            if(queryToken.IsExpired)
             {
                 return false;
             }
@@ -58,20 +110,48 @@ namespace ProgettoIngegneriaSoftware.Models.ControllersModels
             return true;
         }
 
-        public bool IsPasswordEqualToConfirmPassword(string password, string confirmPassword)
+        public async Task<bool> IsLoginTokenValid(string loginToken, UserModel user)
         {
-            return password.Equals(confirmPassword);
+            if (loginToken.Trim().Equals(string.Empty))
+            {
+                return false;
+            }
+            var queryToken = await _autenticationDbContext.LoginTokens.FirstOrDefaultAsync(token => token.Token.Equals(loginToken));
+            if (queryToken is null)
+            {
+                return false;
+            }
+            if (queryToken.User != user)
+            {
+                return false;
+            }
+            if (((TimeSpan)(queryToken.ExpirationDate - DateTime.Now)).Milliseconds <= 0)
+            {
+                queryToken.IsExpired = true;
+                await _autenticationDbContext.SaveChangesAsync();
+            }
+            if (queryToken.IsExpired)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public async Task<bool> LoginTokenExists(string loginToken)
+        {
+            return await _autenticationDbContext.LoginTokens.FirstOrDefaultAsync(token => token.Token.Equals(loginToken)) != null;
         }
 
         public async Task<bool> UserExistsByUsername(string username)
         {
             
-            return await _autenticationDbContext.Users.FirstOrDefaultAsync(user => user.UserName.Equals(username)) != null;
+            return await GetUserByUsername(username) != null;
         }
 
         public async Task<bool> UserExistsByEmail(string email)
         {
-            return await _autenticationDbContext.Users.FirstOrDefaultAsync(user => user.Email.Equals(email)) != null;
+            return await GetUserByEmail(email) != null;
         }
 
         public async Task<bool> CreateNewUser(string username, string email, string password)
@@ -99,7 +179,59 @@ namespace ProgettoIngegneriaSoftware.Models.ControllersModels
             }
         }
 
+        public async Task<UserModel?> GetUserByUsername(string username)
+        {
+            return await _autenticationDbContext.Users.FirstOrDefaultAsync(user => user.UserName.Equals(username));
+        }
+
+        public async Task<UserModel?> GetUserByEmail(string email)
+        {
+            return await _autenticationDbContext.Users.FirstOrDefaultAsync(user => user.Email.Equals(email));
+        }
+
+        public async Task<string> GenerateToken(UserModel user)
+        {
+            var loginToken = String.Empty;
+            do
+            {
+                loginToken = _tokenGenerator.GenerateToken(LoginTokenModel.TOKEN_LENGTH);
+            } while (await LoginTokenExists(loginToken));
+
+            await _autenticationDbContext.LoginTokens.AddAsync(new LoginTokenModel()
+            {
+                Token = loginToken,
+                CreationDate = DateTime.Now,
+                ExpirationDate = DateTime.MaxValue,
+                IsExpired = false,
+                User = user
+            });
+            await _autenticationDbContext.SaveChangesAsync();
+
+            return loginToken;
+        }
+
+        public async Task<bool> ExpireLoginToken(string loginToken)
+        {
+            var token = await _autenticationDbContext.LoginTokens.FirstOrDefaultAsync(queryToken => queryToken.Token.Equals(loginToken));
+            if(token == null)
+            {
+                return false;
+            }
+            token.IsExpired = true;
+            await _autenticationDbContext.SaveChangesAsync();
+            return true;
+        }
+
         #endregion PUBLIC METHODS
+
+        #region PRIVATE METHODS
+
+        private bool IsPasswordEqualToConfirmPassword(string password, string confirmPassword)
+        {
+            return password.Equals(confirmPassword);
+        }
+
+        #endregion PRIVATE METHODS
 
     }
 }

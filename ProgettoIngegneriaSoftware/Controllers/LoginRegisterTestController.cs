@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using ProgettoIngegneriaSoftware.Models;
 using ProgettoIngegneriaSoftware.Models.ControllersModels;
@@ -6,6 +8,7 @@ using ProgettoIngegneriaSoftware.Models.DB_Models.Autentication;
 using ProgettoIngegneriaSoftware.Models.HttpResponseObjects;
 using ProgettoIngegneriaSoftware.Models.Tokenization;
 using ProgettoIngegneriaSoftware.Security;
+using System.Net;
 using System.Text;
 
 namespace ProgettoIngegneriaSoftware.Controllers
@@ -38,19 +41,15 @@ namespace ProgettoIngegneriaSoftware.Controllers
 
         #endregion CTORS
 
-        #region HTTP CALLS
+        #region HTTP ACTIONS
 
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromHeader]string email, [FromHeader]string username, [FromHeader]string password, [FromHeader]string confirmPassword)
         {
             //ERRORS HANDLING
-            if(!_model.IsPasswordValid(password))
+            if(!_model.IsPasswordValid(password, confirmPassword))
             {
-                return BadRequest(Json(new BadRequestData("Invalid password.")));
-            }
-            if(!_model.IsPasswordEqualToConfirmPassword(password, confirmPassword))
-            {
-                return BadRequest(Json(new BadRequestData("Fields password and confirmPassword are not equal.")));
+                return BadRequest(Json(new BadRequestData("Invalid passwords.")));
             }
             if (await _model.UserExistsByUsername(username))
             {
@@ -62,93 +61,95 @@ namespace ProgettoIngegneriaSoftware.Controllers
             }
 
             //New user creation and insertion into the database
-            _model.CreateNewUser(username, email, password);
-            _logger.LogInformation("New User created.");
-            await _autenticationDbContext.Users.AddAsync(newUser);
-            await _autenticationDbContext.SaveChangesAsync();
+            if(!await _model.CreateNewUser(username, email, password))
+            {
+                _logger.LogError("Error while creating the user.");
+                throw new Exception("Error while registering the user.");
+            }
+
+            _logger.LogInformation("User registered correctly.");
             return Ok(Json(new OkData("User registered.")));
         }
 
         [HttpPost("Login")]
-        public async Task<IActionResult> Login([FromHeader]string username, [FromHeader]string password)
+        public async Task<IActionResult> Login([FromHeader] string username, [FromHeader] string password)
         {
             //ERRORS HANDLING
-            var testUser = _autenticationDbContext.Users.FirstOrDefault(user => user.UserName.Equals(username));
-            if(testUser is null)
+            var user = await _model.GetUserByUsername(username);
+            var userLoginTokenValue = Request.Cookies[COOKIE_LOGIN_TOKEN_NAME];
+
+            if (user is null)
             {
                 _logger.LogInformation("User not found.");
-                return BadRequest(Json(new { error = "No user found with this username." }));
+                return BadRequest(Json(new BadRequestData("No user found with this username.")));
             }
-            if(await _passwordHasher.VerifyPassword(password, testUser.PasswordHash, testUser.Salt, true) == false)
+            if (await _model.IsPasswordValid(password, user))
             {
                 _logger.LogInformation("User password is incorrect.");
-                return BadRequest(Json(new { error = "Password is incorrect." }));
+                return BadRequest(Json(new BadRequestData("Password is incorrect.")));
             }
-            var userLoginTokenValue = Request.Cookies[COOKIE_LOGIN_TOKEN_NAME];
-            if(userLoginTokenValue != null && !userLoginTokenValue.Equals(string.Empty))
+            if(userLoginTokenValue != null)
             {
-                _logger.LogInformation("LoginToken found on request cookies: {userLoginTokenValue}", userLoginTokenValue);
-                var userLoginToken = _autenticationDbContext.LoginTokens.FirstOrDefault(token => token.User == testUser && token.Token.Equals(userLoginTokenValue));
-                if(userLoginToken != null && !userLoginToken.IsExpired)
+                if (!await _model.IsLoginTokenValid(userLoginTokenValue, user))
                 {
-                    _logger.LogInformation("LoginToken found and it's not expired, user already autenticated.");
-                    return BadRequest(Json(new { error = "User already autenticated." }));
+                    Response.Cookies.Delete(COOKIE_LOGIN_TOKEN_NAME);
+                    return BadRequest(Json(new BadRequestData("Invalid LoginToken.")));
                 }
-            }
-            var isPasswordValid = await _passwordHasher.VerifyPassword(password, testUser.PasswordHash, testUser.Salt, true);
-            if(!isPasswordValid)
-            {
-                _logger.LogInformation("Invalid user password.");
-                return BadRequest(Json(new { error = "Invalid user password." }));
+                else
+                {
+                    return BadRequest(Json(new BadRequestData("User already logged.")));
+                }
             }
 
             //TOKEN GENERATION
-            var loginToken = String.Empty;
-            do
-            {
-                _logger.LogInformation("Generating LoginToken...");
-                loginToken = _tokenGenerator.GenerateToken(LoginTokenModel.TOKEN_LENGTH);
-                _logger.LogInformation("LoginToken generated: {loginToken}", loginToken);
-            } while (_autenticationDbContext.LoginTokens.FirstOrDefault(queryToken => queryToken.Token.Equals(loginToken)) != null);
-            await _autenticationDbContext.LoginTokens.AddAsync(new LoginTokenModel() {
-                Token = loginToken,
-                CreationDate = DateTime.Now,
-                ExpirationDate = DateTime.MaxValue,
-                IsExpired = false,
-                User = testUser
-                });
-            await _autenticationDbContext.SaveChangesAsync();
+            string token = await _model.GenerateToken(user);
 
-            Response.Cookies.Append(COOKIE_LOGIN_TOKEN_NAME, loginToken);
-            return Ok(Json(new { message = "User autenticated.", loginToken = loginToken }));
+            Response.Cookies.Append(COOKIE_LOGIN_TOKEN_NAME, token);
+            return Ok(Json(new OkData("User autenticated")));
         }
 
         [HttpPost("Logout")]
-        public async Task<IActionResult> Logout([FromHeader]string username)
+        public async Task<IActionResult> Logout([FromHeader] string username)
         {
             //ERRORS HANDLING
-            string? loginTokenValue = Request.Cookies[COOKIE_LOGIN_TOKEN_NAME];
-            if(loginTokenValue == null)
+            var loginTokenValue = Request.Cookies[COOKIE_LOGIN_TOKEN_NAME];
+            if (loginTokenValue == null)
             {
                 _logger.LogInformation("Cookie LoginToken is null");
-                return BadRequest(Json(new { error = "Login token is null." }));
+                return BadRequest(Json(new BadRequestData("Login token not found.")));
             }
-            LoginTokenModel? loginToken = await _autenticationDbContext.LoginTokens.FirstOrDefaultAsync(loginToken => loginToken.Token.Equals(loginTokenValue) && loginToken.User.UserName.Equals(username));
-            if(loginToken == null)
+            var user = await _model.GetUserByUsername(username);
+            if(user is null)
             {
-                _logger.LogInformation("LoginToken is invalid.");
-                return BadRequest(Json(new { error = "Login token is invalid." }));
+                _logger.LogInformation("No user found.");
+                return BadRequest(Json(new BadRequestData("No user found.")));
+            }
+            if (!await _model.IsLoginTokenValid(loginTokenValue, user))
+            {
+                _logger.LogInformation("LoginToken is not valid.");
+                return BadRequest(Json(new BadRequestData("Login token is not valid.")));
             }
 
             Response.Cookies.Delete(COOKIE_LOGIN_TOKEN_NAME);
-            loginToken.IsExpired = true;
-            await _autenticationDbContext.SaveChangesAsync();
+            await _model.ExpireLoginToken(loginTokenValue);
             _logger.LogInformation("LoginToken expired and user logged out.");
 
-            return Ok(Json(new { message = "User logged out correctly." }));
+            return Ok(Json(new OkData("User logged out correctly")));
         }
 
-        #endregion HTTP CALLS
+        #endregion HTTP ACTIONS
+
+        #region ACTION RESULTS
+
+        [NonAction]
+        public InternalServerErrorObjectResult InternalServerError([ActionResultObjectValue] object? error) 
+            => new InternalServerErrorObjectResult(error);
+
+        [NonAction]
+        public InternalServerErrorObjectResult InternalServerError([ActionResultObjectValue] ModelStateDictionary modelState)
+            => new InternalServerErrorObjectResult(modelState);
+
+        #endregion ACTION RESULTS
 
     }
 }
