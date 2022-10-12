@@ -6,7 +6,7 @@ using ProgettoIngegneriaSoftware.Utils.Extensions;
 
 namespace ProgettoIngegneriaSoftware.Models.ControllersModels
 {
-    public class LoginRegisterTestModel
+    public class LoginRegisterModel : ILoginRegisterModel
     {
 
         #region PRIVATE CONSTS
@@ -17,7 +17,7 @@ namespace ProgettoIngegneriaSoftware.Models.ControllersModels
 
         #region PRIVATE READONLY DI FIELDS
 
-        private readonly ILogger<LoginRegisterTestModel> _logger;
+        private readonly ILogger<LoginRegisterModel> _logger;
         private readonly AutenticationDbContext _autenticationDbContext;
         private readonly IPasswordHasher _passwordHasher;
         private readonly ITokenGenerator _tokenGenerator;
@@ -26,8 +26,8 @@ namespace ProgettoIngegneriaSoftware.Models.ControllersModels
 
         #region CTORS
 
-        public LoginRegisterTestModel(
-            ILogger<LoginRegisterTestModel> logger, 
+        public LoginRegisterModel(
+            ILogger<LoginRegisterModel> logger, 
             AutenticationDbContext autenticationDbContext,
             IPasswordHasher passwordHasher,
             ITokenGenerator tokenGenerator

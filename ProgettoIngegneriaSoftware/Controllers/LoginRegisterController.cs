@@ -15,7 +15,7 @@ namespace ProgettoIngegneriaSoftware.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class LoginRegisterTestController : Controller
+    public class LoginRegisterController : Controller
     {
 
         #region PRIVATE CONSTS
@@ -26,14 +26,14 @@ namespace ProgettoIngegneriaSoftware.Controllers
 
         #region PRIVATE READONLY DI FIELDS
 
-        private readonly ILogger<LoginRegisterTestController> _logger;
-        private readonly LoginRegisterTestModel _model;
+        private readonly ILogger<LoginRegisterController> _logger;
+        private readonly ILoginRegisterModel _model;
 
         #endregion PRIVATE READONLY DI FIELDS
 
         #region CTORS
 
-        public LoginRegisterTestController(ILogger<LoginRegisterTestController> logger, LoginRegisterTestModel model)
+        public LoginRegisterController(ILogger<LoginRegisterController> logger, LoginRegisterModel model)
         {
             _logger = logger;
             _model = model;

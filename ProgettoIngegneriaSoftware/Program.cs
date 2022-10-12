@@ -25,7 +25,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddTransient<ITokenGenerator, TokenGenerator>();
 builder.Services.AddTransient<IPasswordHasher, Argon2PasswordHasher>();
 builder.Services.AddTransient<IPasswordHasherOptions, Argon2PasswordHasherOptions>();
-builder.Services.AddTransient<LoginRegisterTestModel>();
+builder.Services.AddTransient<ILoginRegisterModel, LoginRegisterModel>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();   // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
