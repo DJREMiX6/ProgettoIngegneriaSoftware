@@ -3,6 +3,8 @@
     public static class BaseTypeExtensions
     {
 
+        #region BOOL
+
         /// <summary>
         /// Does a comparison byte per byte of the two arrays
         /// </summary>
@@ -25,6 +27,10 @@
             return true;
         }
 
+        #endregion BOOL
+
+        #region STRING
+
         /// <summary>
         /// Checks if a <seealso cref="string"/> contains at least one <seealso cref="char"/> from a <seealso cref="char"/> array
         /// </summary>
@@ -46,6 +52,8 @@
             }
             return false;
         }
+
+        #endregion STRING
 
     }
 }
