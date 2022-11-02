@@ -1,6 +1,6 @@
 ﻿namespace ProgettoIngegneriaSoftware.Extensions
 {
-    public static class IConfigurationExtensionMethods
+    public static class ConfigurationExtensionMethods
     {
 
         /// <summary>
