@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ProgettoIngegneriaSoftware.Migrations
 {
-    public partial class AutenticationDatabaseInit : Migration
+    public partial class AuthenticationDbInit : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,10 +14,12 @@ namespace ProgettoIngegneriaSoftware.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    StoredPassword = table.Column<byte[]>(type: "varbinary(128)", maxLength: 128, nullable: false),
-                    StoredSalt = table.Column<byte[]>(type: "varbinary(32)", maxLength: 32, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false)
+                    Username = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    PasswordHash = table.Column<byte[]>(type: "varbinary(128)", maxLength: 128, nullable: false),
+                    Salt = table.Column<byte[]>(type: "varbinary(32)", maxLength: 32, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    IsConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    ConfirmationToken = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -28,11 +30,13 @@ namespace ProgettoIngegneriaSoftware.Migrations
                 name: "LoginTokens",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Token = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsExpired = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

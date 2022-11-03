@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProgettoIngegneriaSoftware.Models;
 
@@ -10,23 +11,26 @@ using ProgettoIngegneriaSoftware.Models;
 
 namespace ProgettoIngegneriaSoftware.Migrations
 {
-    [DbContext(typeof(AutenticationDbContext))]
-    partial class AutenticationDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(AuthenticationDbContext))]
+    [Migration("20221103140250_AuthenticationDbInit")]
+    partial class AuthenticationDbInit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.9")
+                .HasAnnotation("ProductVersion", "6.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("ProgettoIngegneriaSoftware.Models.DB_Models.Autentication.LoginTokenModel", b =>
+            modelBuilder.Entity("ProgettoIngegneriaSoftware.Models.DB_Models.Authentication.LoginTokenModel", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
@@ -52,16 +56,22 @@ namespace ProgettoIngegneriaSoftware.Migrations
                     b.ToTable("LoginTokens");
                 });
 
-            modelBuilder.Entity("ProgettoIngegneriaSoftware.Models.DB_Models.Autentication.UserModel", b =>
+            modelBuilder.Entity("ProgettoIngegneriaSoftware.Models.DB_Models.Authentication.UserModel", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<long?>("ConfirmationToken")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
+
+                    b.Property<bool>("IsConfirmed")
+                        .HasColumnType("bit");
 
                     b.Property<byte[]>("PasswordHash")
                         .IsRequired()
@@ -73,7 +83,7 @@ namespace ProgettoIngegneriaSoftware.Migrations
                         .HasMaxLength(32)
                         .HasColumnType("varbinary(32)");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("nvarchar(32)");
@@ -83,15 +93,20 @@ namespace ProgettoIngegneriaSoftware.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ProgettoIngegneriaSoftware.Models.DB_Models.Autentication.LoginTokenModel", b =>
+            modelBuilder.Entity("ProgettoIngegneriaSoftware.Models.DB_Models.Authentication.LoginTokenModel", b =>
                 {
-                    b.HasOne("ProgettoIngegneriaSoftware.Models.DB_Models.Autentication.UserModel", "User")
-                        .WithMany()
+                    b.HasOne("ProgettoIngegneriaSoftware.Models.DB_Models.Authentication.UserModel", "User")
+                        .WithMany("LoginTokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ProgettoIngegneriaSoftware.Models.DB_Models.Authentication.UserModel", b =>
+                {
+                    b.Navigation("LoginTokens");
                 });
 #pragma warning restore 612, 618
         }
