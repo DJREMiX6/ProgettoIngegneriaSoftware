@@ -55,5 +55,23 @@
 
         #endregion STRING
 
+        #region TIMESPAN
+
+        public static DateTime ToDateTime(this TimeSpan timeSpan)
+        {
+            return new DateTime(timeSpan.Ticks);
+        }
+
+        #endregion TIMESPAN
+
+        #region DATETIME
+
+        public static TimeSpan ToTimeSpan(this DateTime dateTime)
+        {
+            return new TimeSpan(dateTime.Ticks);
+        }
+
+        #endregion DATETIME
+
     }
 }
