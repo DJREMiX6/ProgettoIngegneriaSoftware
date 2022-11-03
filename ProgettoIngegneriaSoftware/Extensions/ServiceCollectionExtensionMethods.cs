@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProgettoIngegneriaSoftware.Models;
-using ProgettoIngegneriaSoftware.Models.ControllersModels;
 using ProgettoIngegneriaSoftware.Security;
 using ProgettoIngegneriaSoftware.Security.Argon2;
 using ProgettoIngegneriaSoftware.Services;
@@ -10,14 +9,15 @@ namespace ProgettoIngegneriaSoftware.Extensions
     public static class ServiceCollectionExtensionMethods
     {
 
-        public static IServiceCollection AddDatabaseContext(this IServiceCollection serviceCollection)
+        public static IServiceCollection AddDatabaseContext(this IServiceCollection serviceCollection, IConfiguration configuration)
         {
 
 #if DEBUG
-            serviceCollection.AddDbContext<AutenticationDbContext>(options => options.UseInMemoryDatabase("Test_ProgettoIngegneria_AutenticationDb"));
+            /*serviceCollection.AddDbContext<AuthenticationDbContext>(options => options.UseInMemoryDatabase("Test_ProgettoIngegneria_AutenticationDb"));*/
+            serviceCollection.AddDbContext<AuthenticationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("AutenticationDefaultConnection")));
             serviceCollection.AddDatabaseDeveloperPageExceptionFilter();
 #else
-            serviceCollection.AddDbContext<AutenticationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AutenticationDefaultConnection")));
+            serviceCollection.AddDbContext<AuthenticationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("AutenticationDefaultConnection")));
 #endif
 
             return serviceCollection;
@@ -36,13 +36,6 @@ namespace ProgettoIngegneriaSoftware.Extensions
         {
             serviceCollection.AddTransient<IPasswordHasher, Argon2PasswordHasher>();
             serviceCollection.AddTransient<IPasswordHasherOptions, Argon2PasswordHasherOptions>();
-
-            return serviceCollection;
-        }
-
-        public static IServiceCollection AddModels(this IServiceCollection serviceCollection)
-        {
-            serviceCollection.AddTransient<ILoginRegisterModel, LoginRegisterModel>();
 
             return serviceCollection;
         }

@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProgettoIngegneriaSoftware.Models.DB_Models.Autentication;
+using ProgettoIngegneriaSoftware.Models.DB_Models.Authentication;
 
 namespace ProgettoIngegneriaSoftware.Models
 {
-    public class AutenticationDbContext : DbContext
+    public class AuthenticationDbContext : DbContext
     {
-        public AutenticationDbContext(DbContextOptions<AutenticationDbContext> options) : base(options)
+        public AuthenticationDbContext(DbContextOptions<AuthenticationDbContext> options) : base(options)
         { }
 
         public DbSet<UserModel> Users { get; set; }

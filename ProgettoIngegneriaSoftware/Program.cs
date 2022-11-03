@@ -16,10 +16,9 @@ builder.Configuration.AddJsonFile("appsettings.json");
 builder.Configuration.AddJsonFile("appsettings.development.json");
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
-builder.Services.AddDatabaseContext();
+builder.Services.AddDatabaseContext(builder.Configuration);
 builder.Services.AddServices();
 builder.Services.AddPasswordHasher();
-builder.Services.AddModels();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();   // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
