@@ -1,18 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.EntityFrameworkCore;
-using ProgettoIngegneriaSoftware.Models;
-using ProgettoIngegneriaSoftware.Models.ControllersModels;
-using ProgettoIngegneriaSoftware.Models.DB_Models.Autentication;
-using ProgettoIngegneriaSoftware.Models.HttpResponseObjects;
-using ProgettoIngegneriaSoftware.Models.Tokenization;
-using ProgettoIngegneriaSoftware.Security;
-using System.Net;
-using System.Text;
+﻿using System.Net.Mime;
+using Microsoft.AspNetCore.Mvc;
+using ProgettoIngegneriaSoftware.Models.DB_Models.Authentication.Records;
+using ProgettoIngegneriaSoftware.Services;
+using ProgettoIngegneriaSoftware.Utils.Extensions;
 
 namespace ProgettoIngegneriaSoftware.Controllers
 {
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
     [Route("[controller]")]
     public class LoginRegisterController : Controller
@@ -27,129 +22,154 @@ namespace ProgettoIngegneriaSoftware.Controllers
         #region PRIVATE READONLY DI FIELDS
 
         private readonly ILogger<LoginRegisterController> _logger;
-        private readonly ILoginRegisterModel _model;
+        private readonly IUserModelService _userModelService;
+        private readonly ILoginTokenModelService _loginTokenModelService;
 
         #endregion PRIVATE READONLY DI FIELDS
 
         #region CTORS
 
-        public LoginRegisterController(ILogger<LoginRegisterController> logger, LoginRegisterModel model)
+        public LoginRegisterController(ILogger<LoginRegisterController> logger, IUserModelService userModelService, ILoginTokenModelService loginTokenModelService)
         {
             _logger = logger;
-            _model = model;
+            _userModelService = userModelService;
+            _loginTokenModelService = loginTokenModelService;
         }
 
         #endregion CTORS
 
         #region HTTP ACTIONS
 
-        [HttpPost("Register")]
-        public async Task<IActionResult> Register([FromHeader]string email, [FromHeader]string username, [FromHeader]string password, [FromHeader]string confirmPassword)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpPost("/register", Name = "RegisterNewUser")]
+        public async Task<IActionResult> RegisterNewUser([FromBody]UserModelRecord userToRegister)
         {
-            //ERRORS HANDLING
-            if(!_model.IsPasswordValid(password, confirmPassword))
+            //If username is already in use
+            if (await _userModelService.ExistsAsync(username: userToRegister.Username))
             {
-                return BadRequest(Json(new BadRequestData("Invalid passwords.")));
-            }
-            if (await _model.UserExistsByUsername(username))
-            {
-                return BadRequest(Json(new BadRequestData("Username already in use by another user.")));
-            }
-            if(await _model.UserExistsByEmail(email))
-            {
-                return BadRequest(Json(new BadRequestData("Email already in use by another user.")));
+                return BadRequest("Username already in use.");
             }
 
-            //New user creation and insertion into the database
-            if(!await _model.CreateNewUser(username, email, password))
+            //If email is already in use
+            if (await _userModelService.ExistsAsync(email: userToRegister.Email))
             {
-                _logger.LogError("Error while creating the user.");
-                throw new Exception("Error while registering the user.");
+                return BadRequest("Email already in use.");
             }
 
-            _logger.LogInformation("User registered correctly.");
-            return Ok(Json(new OkData("User registered.")));
+            //Register the user
+            var registeredUser = await _userModelService.CreateAsync(userToRegister);
+
+            if (registeredUser is null)
+            {
+                return BadRequest("Error while registering.");
+            }
+
+            return Ok(new { Message = "User registered.", ConfirmationToken = registeredUser.ConfirmationToken });
         }
 
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login([FromHeader] string username, [FromHeader] string password)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpPost("/login", Name = "LoginUser")]
+        public async Task<IActionResult> LoginUser([FromHeader]string username, [FromHeader]string password)
         {
-            //ERRORS HANDLING
-            var user = await _model.GetUserByUsername(username);
-            var userLoginTokenValue = Request.Cookies[COOKIE_LOGIN_TOKEN_NAME];
+            var user = await _userModelService.GetAsync(username: username);
 
             if (user is null)
             {
-                _logger.LogInformation("User not found.");
-                return BadRequest(Json(new BadRequestData("No user found with this username.")));
-            }
-            if (await _model.IsPasswordValid(password, user))
-            {
-                _logger.LogInformation("User password is incorrect.");
-                return BadRequest(Json(new BadRequestData("Password is incorrect.")));
-            }
-            if(userLoginTokenValue != null)
-            {
-                if (!await _model.IsLoginTokenValid(userLoginTokenValue, user))
-                {
-                    Response.Cookies.Delete(COOKIE_LOGIN_TOKEN_NAME);
-                    return BadRequest(Json(new BadRequestData("Invalid LoginToken.")));
-                }
-                else
-                {
-                    return BadRequest(Json(new BadRequestData("User already logged.")));
-                }
+                return NotFound("User not found.");
             }
 
-            //TOKEN GENERATION
-            string token = await _model.GenerateToken(user);
+            if (!await _userModelService.ValidateAsync(username, password))
+            {
+                return BadRequest("Password is incorrect.");
+            }
 
-            Response.Cookies.Append(COOKIE_LOGIN_TOKEN_NAME, token);
-            return Ok(Json(new OkData("User autenticated")));
+            if (!user.IsConfirmed)
+            {
+                return BadRequest("User not confirmed.");
+            }
+
+            var requestLoginToken = Request.Cookies[COOKIE_LOGIN_TOKEN_NAME];
+            if (requestLoginToken is not null)
+            {
+                await _loginTokenModelService.ExpireAsync(requestLoginToken);
+                Response.Cookies.Delete(COOKIE_LOGIN_TOKEN_NAME);
+            }
+
+            var loginToken = await _loginTokenModelService.CreateAsync(user);
+            if (loginToken is null)
+            {
+                return BadRequest("Error while logging in.");
+            }
+
+            Response.Cookies.Append(COOKIE_LOGIN_TOKEN_NAME, loginToken.Token);
+            return Ok("User logged in correctly.");
         }
 
-        [HttpPost("Logout")]
-        public async Task<IActionResult> Logout([FromHeader] string username)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpPut("/logout", Name = "LogoutUser")]
+        public async Task<IActionResult> LogoutUser([FromHeader] string username)
         {
-            //ERRORS HANDLING
-            var loginTokenValue = Request.Cookies[COOKIE_LOGIN_TOKEN_NAME];
-            if (loginTokenValue == null)
+            var user = await _userModelService.GetAsync(username);
+            if (user is null)
             {
-                _logger.LogInformation("Cookie LoginToken is null");
-                return BadRequest(Json(new BadRequestData("Login token not found.")));
+                Response.Cookies.Delete(COOKIE_LOGIN_TOKEN_NAME);
+                return NotFound("User not found.");
             }
-            var user = await _model.GetUserByUsername(username);
-            if(user is null)
+
+            var requestLoginToken = Request.Cookies[COOKIE_LOGIN_TOKEN_NAME];
+            if (requestLoginToken is null)
             {
-                _logger.LogInformation("No user found.");
-                return BadRequest(Json(new BadRequestData("No user found.")));
+                return BadRequest("Login token not provided.");
             }
-            if (!await _model.IsLoginTokenValid(loginTokenValue, user))
+
+            if (!await _loginTokenModelService.IsValidAsync(username, requestLoginToken))
             {
-                _logger.LogInformation("LoginToken is not valid.");
-                return BadRequest(Json(new BadRequestData("Login token is not valid.")));
+                Response.Cookies.Delete(COOKIE_LOGIN_TOKEN_NAME);
+                return BadRequest("No valid login token provided.");
+            }
+
+            var expiredLoginToken = await _loginTokenModelService.ExpireAsync(requestLoginToken);
+            if (expiredLoginToken is null)
+            {
+                return BadRequest("Error while logging out the user.");
             }
 
             Response.Cookies.Delete(COOKIE_LOGIN_TOKEN_NAME);
-            await _model.ExpireLoginToken(loginTokenValue);
-            _logger.LogInformation("LoginToken expired and user logged out.");
+            return Ok("User logged out correctly.");
+        }
 
-            return Ok(Json(new OkData("User logged out correctly")));
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpGet("/confirm-user/{confirmationToken:long}", Name = "ConfirmUser")]
+        public async Task<IActionResult> ConfirmUser([FromRoute(Name = "confirmationToken")]long confirmationToken)
+        {
+            if (!confirmationToken.IsValidConfirmationToken())
+            {
+                return BadRequest("Invalid confirmation token.");
+            }
+
+            var user = await _userModelService.GetAsync(confirmationToken);
+            if (user is null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var confirmedUser = await _userModelService.ConfirmAsync(confirmationToken);
+            if (confirmedUser is null)
+            {
+                return BadRequest("Error while confirming the user.");
+            }
+
+            return Ok("User confirmed.");
         }
 
         #endregion HTTP ACTIONS
-
-        #region ACTION RESULTS
-
-        [NonAction]
-        public InternalServerErrorObjectResult InternalServerError([ActionResultObjectValue] object? error) 
-            => new InternalServerErrorObjectResult(error);
-
-        [NonAction]
-        public InternalServerErrorObjectResult InternalServerError([ActionResultObjectValue] ModelStateDictionary modelState)
-            => new InternalServerErrorObjectResult(modelState);
-
-        #endregion ACTION RESULTS
 
     }
 }
