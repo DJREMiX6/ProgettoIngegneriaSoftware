@@ -6,6 +6,14 @@ namespace ProgettoIngegneriaSoftware.Security.Argon2
     public class Argon2PasswordHasherOptions : IPasswordHasherOptions
     {
 
+        #region PRIVATE CONSTS
+
+        private const int DEGREE_OF_PARALLELISM = 6;
+        private const int MEMORY_SIZE = 1024 * 1024;
+        private const int ITERATIONS_OPTION = 8;
+
+        #endregion PRIVATE CONSTS
+
         #region PRIVATE BACKING FIELDS
 
         private IDictionary<string, string> _options;
@@ -26,9 +34,9 @@ namespace ProgettoIngegneriaSoftware.Security.Argon2
             _logger = logger;
             _configuration = configuration;
             ((IPasswordHasherOptions)this)
-                .SetDegreeOfParallelism(6)
-                .SetMemorySize(1024 * 1024)
-                .SetIterationsOption(12)
+                .SetDegreeOfParallelism(DEGREE_OF_PARALLELISM)
+                .SetMemorySize(MEMORY_SIZE)
+                .SetIterationsOption(ITERATIONS_OPTION)
                 .SetKnownSecretOption(_configuration.GetSecuritySecret());
         }
 
