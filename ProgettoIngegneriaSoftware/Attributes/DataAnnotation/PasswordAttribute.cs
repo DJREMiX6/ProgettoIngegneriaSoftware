@@ -1,23 +1,24 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using ProgettoIngegneriaSoftware.Models.ControllersModels;
+using ProgettoIngegneriaSoftware.Utils.Consts;
 
 namespace ProgettoIngegneriaSoftware.Attributes.DataAnnotation
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.Property, AllowMultiple = false)]
     public class PasswordAttribute : ValidationAttribute
     {
+
         public override bool IsValid(object? value)
         {
             EnsureLegalValue(value);
 
             var password = ((string)value).Trim();
 
-            if (password.Length < LoginRegisterModel.MINIMUM_PASSWORD_LENGTH)
+            if (password.Length < PasswordConsts.MINIMUM_PASSWORD_LENGTH)
             {
                 return false;
             }
 
-            if (password.Length > LoginRegisterModel.MAXIMUM_PASSWORD_LENGTH)
+            if (password.Length > PasswordConsts.MAXIMUM_PASSWORD_LENGTH)
             {
                 return false;
             }
