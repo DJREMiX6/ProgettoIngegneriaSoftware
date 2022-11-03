@@ -29,6 +29,12 @@
 
         #endregion BOOL
 
+        #region LONG
+
+        public static bool IsValidConfirmationToken(this long confirmationToken) => confirmationToken > 123456;
+
+        #endregion LONG
+
         #region STRING
 
         /// <summary>
