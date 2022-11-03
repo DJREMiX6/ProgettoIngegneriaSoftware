@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProgettoIngegneriaSoftware.Models.DB_Models.Autentication
+namespace ProgettoIngegneriaSoftware.Models.DB_Models.Authentication
 {
     public class UserModel
     {
@@ -48,7 +48,8 @@ namespace ProgettoIngegneriaSoftware.Models.DB_Models.Autentication
         
         public long? ConfirmationToken { get; set; }
 
-        public IList<LoginTokenModel>? LoginTokens { get; set; }
+        [Required]
+        public virtual List<LoginTokenModel> LoginTokens { get; set; }
 
         #endregion MODEL ATTRIBUTES
 

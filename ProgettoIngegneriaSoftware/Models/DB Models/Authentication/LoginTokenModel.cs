@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProgettoIngegneriaSoftware.Models.DB_Models.Autentication
+namespace ProgettoIngegneriaSoftware.Models.DB_Models.Authentication
 {
     public class LoginTokenModel
     {
@@ -14,7 +14,11 @@ namespace ProgettoIngegneriaSoftware.Models.DB_Models.Autentication
         public int Id { get; set; }
 
         [Required]
-        public UserModel User { get; set; }
+        [ForeignKey(nameof(UserId))]
+        public virtual UserModel User { get; set; }
+
+        [Required]
+        public Guid UserId { get; set; }
 
         [Required]
         [StringLength(TOKEN_LENGTH)]

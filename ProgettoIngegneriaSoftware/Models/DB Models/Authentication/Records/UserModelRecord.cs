@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using ProgettoIngegneriaSoftware.Attributes.DataAnnotation;
-using ProgettoIngegneriaSoftware.Models.ControllersModels;
+using ProgettoIngegneriaSoftware.Utils.Consts;
 
-namespace ProgettoIngegneriaSoftware.Models.DB_Models.Autentication.Records
+namespace ProgettoIngegneriaSoftware.Models.DB_Models.Authentication.Records
 {
     public record UserModelRecord
     {
@@ -21,8 +21,8 @@ namespace ProgettoIngegneriaSoftware.Models.DB_Models.Autentication.Records
 
         [Required(AllowEmptyStrings = false)]
         [Password]
-        [MinLength(LoginRegisterModel.MINIMUM_PASSWORD_LENGTH)]
-        [MaxLength(LoginRegisterModel.MAXIMUM_PASSWORD_LENGTH)]
+        [MinLength(PasswordConsts.MINIMUM_PASSWORD_LENGTH)]
+        [MaxLength(PasswordConsts.MAXIMUM_PASSWORD_LENGTH)]
         public string Password
         {
             get => _password;
@@ -31,8 +31,8 @@ namespace ProgettoIngegneriaSoftware.Models.DB_Models.Autentication.Records
 
         [Password]
         [Required(AllowEmptyStrings = false)]
-        [MinLength(LoginRegisterModel.MINIMUM_PASSWORD_LENGTH)]
-        [MaxLength(LoginRegisterModel.MAXIMUM_PASSWORD_LENGTH)]
+        [MinLength(PasswordConsts.MINIMUM_PASSWORD_LENGTH)]
+        [MaxLength(PasswordConsts.MAXIMUM_PASSWORD_LENGTH)]
         public string ConfirmPassword
         {
             get => _confirmPassword;
