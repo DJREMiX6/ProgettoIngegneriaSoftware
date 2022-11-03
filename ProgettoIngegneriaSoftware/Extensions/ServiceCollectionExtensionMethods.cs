@@ -9,16 +9,19 @@ namespace ProgettoIngegneriaSoftware.Extensions
     public static class ServiceCollectionExtensionMethods
     {
 
-        public static IServiceCollection AddDatabaseContext(this IServiceCollection serviceCollection, IConfiguration configuration)
+        public static IServiceCollection AddDatabaseContext(this IServiceCollection serviceCollection, IConfiguration configuration, bool useTempDb = false) 
         {
+            if (useTempDb)
+            {
+                serviceCollection.AddDbContext<AuthenticationDbContext>(options => options.UseInMemoryDatabase("Test_ProgettoIngegneria_AutenticationDb"));
+            }
+            else
+            {
+                serviceCollection.AddDbContext<AuthenticationDbContext>(options =>
+                    options.UseSqlServer(configuration.GetConnectionString("AutenticationDefaultConnection")));
+            }
 
-#if DEBUG
-            /*serviceCollection.AddDbContext<AuthenticationDbContext>(options => options.UseInMemoryDatabase("Test_ProgettoIngegneria_AutenticationDb"));*/
-            serviceCollection.AddDbContext<AuthenticationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("AutenticationDefaultConnection")));
             serviceCollection.AddDatabaseDeveloperPageExceptionFilter();
-#else
-            serviceCollection.AddDbContext<AuthenticationDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("AutenticationDefaultConnection")));
-#endif
 
             return serviceCollection;
         }

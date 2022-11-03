@@ -16,7 +16,7 @@ builder.Configuration.AddJsonFile("appsettings.json");
 builder.Configuration.AddJsonFile("appsettings.development.json");
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
-builder.Services.AddDatabaseContext(builder.Configuration);
+builder.Services.AddDatabaseContext(builder.Configuration, useTempDb: false);
 builder.Services.AddServices();
 builder.Services.AddPasswordHasher();
 builder.Services.AddControllers();
