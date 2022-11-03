@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProgettoIngegneriaSoftware.Models;
-using ProgettoIngegneriaSoftware.Models.DB_Models.Autentication;
-using ProgettoIngegneriaSoftware.Models.DB_Models.Autentication.Records;
+using ProgettoIngegneriaSoftware.Models.DB_Models.Authentication;
+using ProgettoIngegneriaSoftware.Models.DB_Models.Authentication.Records;
 using ProgettoIngegneriaSoftware.Security;
+using ProgettoIngegneriaSoftware.Utils.Extensions;
 
 namespace ProgettoIngegneriaSoftware.Services
 {
@@ -11,7 +12,7 @@ namespace ProgettoIngegneriaSoftware.Services
 
         #region PRIVATE READONLY DI FIELDS
 
-        private readonly AutenticationDbContext _autenticationDbContext;
+        private readonly AuthenticationDbContext _authenticationDbContext;
         private readonly ILogger<UserModelService> _logger;
         private readonly IPasswordHasher _passwordHasher;
 
@@ -19,11 +20,11 @@ namespace ProgettoIngegneriaSoftware.Services
 
         #region CTORS
 
-        public UserModelService(AutenticationDbContext autenticationDbContext, 
+        public UserModelService(AuthenticationDbContext authenticationDbContext, 
             ILogger<UserModelService> logger,
             IPasswordHasher passwordHasher)
         {
-            _autenticationDbContext = autenticationDbContext;
+            _authenticationDbContext = authenticationDbContext;
             _logger = logger;
             _passwordHasher = passwordHasher;
         }
@@ -69,12 +70,12 @@ namespace ProgettoIngegneriaSoftware.Services
 
         public async Task<UserModel?> GetAsync(Guid id)
         {
-            return await _autenticationDbContext.Users.FindAsync(id);
+            return await _authenticationDbContext.Users.FindAsync(id);
         }
 
         public async Task<UserModel?> GetAsync(long confirmationToken)
         {
-            return await _autenticationDbContext.Users.FirstOrDefaultAsync(user =>
+            return await _authenticationDbContext.Users.FirstOrDefaultAsync(user =>
                 user.ConfirmationToken.Equals(confirmationToken));
         }
 
@@ -97,18 +98,29 @@ namespace ProgettoIngegneriaSoftware.Services
 
             if (username is null)
             {
-                return await _autenticationDbContext.Users.FirstOrDefaultAsync(user => user.Email.Equals(email));
+                return await _authenticationDbContext.Users.FirstOrDefaultAsync(user => user.Email.Equals(email));
             }
 
-            return await _autenticationDbContext.Users.FirstOrDefaultAsync(user => user.Username.Equals(username));
+            return await _authenticationDbContext.Users.FirstOrDefaultAsync(user => user.Username.Equals(username));
         }
 
-        public async Task<bool> Exists(Guid id)
+        public async Task<bool> ValidateAsync(string username, string password)
+        {
+            var user = await GetAsync(username: username);
+            if (user is null)
+            {
+                return false;
+            }
+
+            return await _passwordHasher.VerifyPassword(password, user.PasswordHash, user.Salt, useSecret: true);
+        }
+
+        public async Task<bool> ExistsAsync(Guid id)
         {
             return await GetAsync(id) is not null;
         }
 
-        public async Task<bool> Exists(string? username, string? email)
+        public async Task<bool> ExistsAsync(string? username, string? email)
         {
             return await GetAsync(username: username, email: email) is not null;
         }
@@ -130,7 +142,7 @@ namespace ProgettoIngegneriaSoftware.Services
             userToUpdate.PasswordHash = userModel.PasswordHash.Equals(Array.Empty<byte>()) ? userToUpdate.PasswordHash : userModel.PasswordHash;
             userToUpdate.Salt = userModel.Salt.Equals(Array.Empty<byte>()) ? userToUpdate.Salt : userModel.Salt;
 
-            await _autenticationDbContext.SaveChangesAsync();
+            await _authenticationDbContext.SaveChangesAsync();
 
             return userToUpdate;
         }
@@ -169,10 +181,15 @@ namespace ProgettoIngegneriaSoftware.Services
                 return null;
             }
 
+            if (userToConfirm.ConfirmationToken == 0)
+            {
+                return null;
+            }
+
             userToConfirm.IsConfirmed = true;
             userToConfirm.ConfirmationToken = 0;
 
-            await _autenticationDbContext.SaveChangesAsync();
+            await _authenticationDbContext.SaveChangesAsync();
 
             return userToConfirm;
         }
@@ -190,8 +207,8 @@ namespace ProgettoIngegneriaSoftware.Services
                 return null;
             }
 
-            _autenticationDbContext.Users.Remove(userToDelete);
-            await _autenticationDbContext.SaveChangesAsync();
+            _authenticationDbContext.Users.Remove(userToDelete);
+            await _authenticationDbContext.SaveChangesAsync();
 
             return userToDelete;
         }
@@ -244,8 +261,8 @@ namespace ProgettoIngegneriaSoftware.Services
 
             userModel.Id = Guid.Empty;
 
-            var addedUserEntity = await _autenticationDbContext.Users.AddAsync(userModel);
-            await _autenticationDbContext.SaveChangesAsync();
+            var addedUserEntity = await _authenticationDbContext.Users.AddAsync(userModel);
+            await _authenticationDbContext.SaveChangesAsync();
 
             return addedUserEntity.Entity;
         }
@@ -264,7 +281,7 @@ namespace ProgettoIngegneriaSoftware.Services
 
         private async Task<bool> IsNewConfirmationTokenValid(long confirmationToken)
         {
-            if (confirmationToken <= 123456)
+            if (!confirmationToken.IsValidConfirmationToken())
             {
                 return false;
             }

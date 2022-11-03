@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProgettoIngegneriaSoftware.Models;
-using ProgettoIngegneriaSoftware.Models.DB_Models.Autentication;
+using ProgettoIngegneriaSoftware.Models.DB_Models.Authentication;
 
 namespace ProgettoIngegneriaSoftware.Services
 {
@@ -9,7 +9,7 @@ namespace ProgettoIngegneriaSoftware.Services
 
         #region PRIVATE READONLY DI FIELDS
 
-        private readonly AutenticationDbContext _autenticationDbContext;
+        private readonly AuthenticationDbContext _authenticationDbContext;
         private readonly ILogger<LoginTokenModelService> _logger;
         private readonly ITokenGeneratorService _tokenGeneratorService;
         private readonly IUserModelService _userModelService;
@@ -18,12 +18,12 @@ namespace ProgettoIngegneriaSoftware.Services
 
         #region CTORS
 
-        public LoginTokenModelService(AutenticationDbContext autenticationDbContext,
+        public LoginTokenModelService(AuthenticationDbContext authenticationDbContext,
             ILogger<LoginTokenModelService> logger,
             ITokenGeneratorService tokenGeneratorService, 
             IUserModelService userModelService)
         {
-            _autenticationDbContext = autenticationDbContext;
+            _authenticationDbContext = authenticationDbContext;
             _logger = logger;
             _tokenGeneratorService = tokenGeneratorService;
             _userModelService = userModelService;
@@ -35,8 +35,8 @@ namespace ProgettoIngegneriaSoftware.Services
 
         public async Task<LoginTokenModel?> CreateAsync(UserModel userModel)
         {
-
-            if (!await _userModelService.Exists(userModel.Username))
+            var user = await _userModelService.GetAsync(username: userModel.Username);
+            if (user is null)
             {
                 return null;
             }
@@ -45,13 +45,14 @@ namespace ProgettoIngegneriaSoftware.Services
             var loginTokenModel = new LoginTokenModel()
             {
                 Token = loginTokenValue,
-                User = userModel,
+                UserId = user.Id,
+                User = user,
                 CreationDate = DateTime.Now,
                 ExpirationDate = DateTime.Now.AddMonths(1)
             };
 
-            var returningLoginTokenEntity = await _autenticationDbContext.LoginTokens.AddAsync(loginTokenModel);
-            await _autenticationDbContext.SaveChangesAsync();
+            var returningLoginTokenEntity = await _authenticationDbContext.LoginTokens.AddAsync(loginTokenModel);
+            await _authenticationDbContext.SaveChangesAsync();
 
             return returningLoginTokenEntity.Entity;
         }
@@ -86,12 +87,12 @@ namespace ProgettoIngegneriaSoftware.Services
 
         public async Task<LoginTokenModel?> GetAsync(int id)
         {
-            return await _autenticationDbContext.LoginTokens.FindAsync(id);
+            return await _authenticationDbContext.LoginTokens.FindAsync(id);
         }
 
         public async Task<LoginTokenModel?> GetAsync(string loginTokenValue)
         {
-            return await _autenticationDbContext.LoginTokens.FirstOrDefaultAsync(loginToken =>
+            return await _authenticationDbContext.LoginTokens.FirstOrDefaultAsync(loginToken =>
                 loginToken.Token.Equals(loginTokenValue));
         }
 
@@ -103,6 +104,34 @@ namespace ProgettoIngegneriaSoftware.Services
         public async Task<bool> Exists(int id)
         {
             return await GetAsync(id) is not null;
+        }
+
+        public async Task<bool> IsValidAsync(string username, string loginToken)
+        {
+            var user = await _userModelService.GetAsync(username: username);
+            if (user is null)
+            {
+                return false;
+            }
+
+            var queryToken =
+                await _authenticationDbContext.LoginTokens.FirstOrDefaultAsync(token => token.Token.Equals(loginToken));
+            if (queryToken is null)
+            {
+                return false;
+            }
+
+            if (queryToken.UserId != user.Id)
+            {
+                return false;
+            }
+
+            if (queryToken.IsExpired)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         #endregion READ
@@ -122,7 +151,7 @@ namespace ProgettoIngegneriaSoftware.Services
             queryLoginTokenModel.CreationDate = loginTokenModel.CreationDate.Equals(DateTime.MinValue) ? queryLoginTokenModel.CreationDate : loginTokenModel.CreationDate;
             queryLoginTokenModel.ExpirationDate = loginTokenModel.ExpirationDate.Equals(DateTime.MinValue) ? queryLoginTokenModel.ExpirationDate : loginTokenModel.ExpirationDate;
 
-            await _autenticationDbContext.SaveChangesAsync();
+            await _authenticationDbContext.SaveChangesAsync();
 
             return queryLoginTokenModel;
         }
@@ -154,7 +183,7 @@ namespace ProgettoIngegneriaSoftware.Services
             }
 
             loginTokenModel.IsExpired = true;
-            await _autenticationDbContext.SaveChangesAsync();
+            await _authenticationDbContext.SaveChangesAsync();
 
             return loginTokenModel;
         }
@@ -169,7 +198,7 @@ namespace ProgettoIngegneriaSoftware.Services
             }
 
             loginTokenModel.IsExpired = true;
-            await _autenticationDbContext.SaveChangesAsync();
+            await _authenticationDbContext.SaveChangesAsync();
 
             return loginTokenModel;
         }
@@ -204,8 +233,8 @@ namespace ProgettoIngegneriaSoftware.Services
 
         public async Task<LoginTokenModel?> DeleteAsync(LoginTokenModel loginTokenModel)
         {
-            var returningLoginTokenModelEntity = _autenticationDbContext.LoginTokens.Remove(loginTokenModel);
-            await _autenticationDbContext.SaveChangesAsync();
+            var returningLoginTokenModelEntity = _authenticationDbContext.LoginTokens.Remove(loginTokenModel);
+            await _authenticationDbContext.SaveChangesAsync();
 
             return returningLoginTokenModelEntity.Entity;
         }

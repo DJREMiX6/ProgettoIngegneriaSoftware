@@ -1,5 +1,5 @@
-﻿using ProgettoIngegneriaSoftware.Models.DB_Models.Autentication;
-using ProgettoIngegneriaSoftware.Models.DB_Models.Autentication.Records;
+﻿using ProgettoIngegneriaSoftware.Models.DB_Models.Authentication;
+using ProgettoIngegneriaSoftware.Models.DB_Models.Authentication.Records;
 
 namespace ProgettoIngegneriaSoftware.Services
 {
@@ -46,8 +46,9 @@ namespace ProgettoIngegneriaSoftware.Services
         /// or <c>null</c> if no <see cref="UserModel"/> with that specific Username has been found.</returns>
         public Task<UserModel?> GetAsync(string? username = null, string? email = null);
 
-        public Task<bool> Exists(Guid id);
-        public Task<bool> Exists(string? username = null, string? email = null);
+        public Task<bool> ValidateAsync(string username, string password); 
+        public Task<bool> ExistsAsync(Guid id);
+        public Task<bool> ExistsAsync(string? username = null, string? email = null);
 
         #endregion READ
 

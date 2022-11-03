@@ -1,4 +1,4 @@
-﻿using ProgettoIngegneriaSoftware.Models.DB_Models.Autentication;
+﻿using ProgettoIngegneriaSoftware.Models.DB_Models.Authentication;
 
 namespace ProgettoIngegneriaSoftware.Services
 {
@@ -56,6 +56,8 @@ namespace ProgettoIngegneriaSoftware.Services
         /// <returns><c>true</c> if exists an instance of <see cref="LoginTokenModel"/> with that Id 
         /// or <c>false</c> if it does not exists in the data source.</returns>
         public Task<bool> Exists(int id);
+
+        public Task<bool> IsValidAsync(string username, string loginToken);
 
         #endregion READ
 
