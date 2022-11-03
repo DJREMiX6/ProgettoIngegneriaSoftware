@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProgettoIngegneriaSoftware.Models.DB_Models.Autentication
 {
@@ -9,7 +10,8 @@ namespace ProgettoIngegneriaSoftware.Models.DB_Models.Autentication
 
         [Key]
         [Required]
-        public Guid Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
 
         [Required]
         public UserModel User { get; set; }

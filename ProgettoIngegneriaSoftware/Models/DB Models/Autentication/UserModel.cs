@@ -1,34 +1,56 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProgettoIngegneriaSoftware.Models.DB_Models.Autentication
 {
     public class UserModel
     {
 
-        public const int USERNAME_LENGTH = 32;
+        #region PUBLIC CONSTS
+
+        public const int USERNAME_MAX_LENGTH = 32;
+        public const int USERNAME_MIN_LENGTH = 3;
+        public const int EMAIL_MAX_LENGTH = 128;
+        public const int EMAIL_MIN_LENGTH = 6;
         public const int PASSWORD_HASH_LENGTH = 128;
         public const int SALT_LENGTH = 32;
-        public const int EMAIL_LENGTH = 128;
+
+        #endregion PUBLIC CONSTS
+
+        #region MODEL ATTRIBUTES
 
         [Key]
-        [Required]
+        [Required(AllowEmptyStrings = false)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
 
-        [Required]
-        [StringLength(USERNAME_LENGTH)]
-        public string UserName { get; set; }
+        [Required(AllowEmptyStrings = false)]
+        [StringLength(maximumLength: USERNAME_MAX_LENGTH, MinimumLength = USERNAME_MIN_LENGTH)]
+        public string Username { get; set; }
 
         [Required]
         [MaxLength(PASSWORD_HASH_LENGTH)]
+        [MinLength(PASSWORD_HASH_LENGTH)]
         public byte[] PasswordHash { get; set; }
 
         [Required]
         [MaxLength(SALT_LENGTH)]
+        [MinLength(SALT_LENGTH)]
         public byte[] Salt { get; set; }
 
         [Required]
-        [StringLength(EMAIL_LENGTH)]
+        [EmailAddress]
+        [StringLength(maximumLength: EMAIL_MAX_LENGTH, MinimumLength = EMAIL_MIN_LENGTH)]
         public string Email { get; set; }
+
+        [Required]
+        public bool IsConfirmed { get; set; }
+        
+        public long? ConfirmationToken { get; set; }
+
+        public IList<LoginTokenModel>? LoginTokens { get; set; }
+
+        #endregion MODEL ATTRIBUTES
 
     }
 }
