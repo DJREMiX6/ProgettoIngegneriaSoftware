@@ -31,7 +31,8 @@
 
         #region LONG
 
-        public static bool IsValidConfirmationToken(this long confirmationToken) => confirmationToken > 123456;
+        ///9007199254740991 is equal to JavaScript Number.MAX_SAFE_INTEGER to avoid wrong number conversion
+        public static bool IsValidConfirmationToken(this long confirmationToken) => confirmationToken is > 12345 and < 9007199254740991;
 
         #endregion LONG
 
