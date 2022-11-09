@@ -1,8 +1,9 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Serilog;
 using Serilog.Events;
-using Microsoft.EntityFrameworkCore;
 using ProgettoIngegneriaSoftware.Extensions;
-using ProgettoIngegneriaSoftware.Models;
+using ProgettoIngegneriaSoftware.Services;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
@@ -16,9 +17,10 @@ builder.Configuration.AddJsonFile("appsettings.json");
 builder.Configuration.AddJsonFile("appsettings.development.json");
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog();
-builder.Services.AddDatabaseContext(builder.Configuration, useTempDb: false);
+builder.Services.AddDatabaseContexts(builder.Configuration, useTempDb: true);
 builder.Services.AddServices();
-builder.Services.AddPasswordHasher();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();   // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -32,6 +34,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+/*app.UseCustomAuthentication();*/
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

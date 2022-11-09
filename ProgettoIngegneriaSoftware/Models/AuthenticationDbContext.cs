@@ -9,7 +9,6 @@ namespace ProgettoIngegneriaSoftware.Models
         { }
 
         public DbSet<UserModel> Users { get; set; }
-        public DbSet<LoginTokenModel> LoginTokens { get; set; }
 
     }
 }

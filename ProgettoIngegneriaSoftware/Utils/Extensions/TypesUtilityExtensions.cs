@@ -1,4 +1,7 @@
-﻿namespace ProgettoIngegneriaSoftware.Utils.Extensions
+﻿using System.IO.Pipelines;
+using System.Text;
+
+namespace ProgettoIngegneriaSoftware.Utils.Extensions
 {
     public static class BaseTypeExtensions
     {
@@ -60,6 +63,11 @@
             return false;
         }
 
+        public static byte[] GetUTF8Bytes(this string str)
+        {
+            return Encoding.UTF8.GetBytes(str);
+        }
+
         #endregion STRING
 
         #region TIMESPAN
@@ -79,6 +87,51 @@
         }
 
         #endregion DATETIME
+
+        #region PATHSTRING
+
+        /// <summary>
+        /// Determines if the beginning of this <seealso cref="PathString"/> instance matches at least one of the <seealso cref="PathString"/> instances in the collection.
+        /// </summary>
+        /// <param name="pathString"></param>
+        /// <param name="pathStrings"></param>
+        /// <returns><c>True</c> if one of the <seealso cref="PathString"/> instances matches this <seealso cref="PathString"/> instance, otherwise, <c>false</c>.</returns>
+        public static bool StartsWithSegments(this PathString pathString, ICollection<PathString> pathStrings)
+        {
+            foreach (var path in pathStrings)
+            {
+                if (pathString.StartsWithSegments(path))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        #endregion PATHSTRING
+
+        #region STREAM
+
+        public static async Task WriteLineAsync(this Stream stream, string message)
+        {
+            var messageBytes = (message + Environment.NewLine).GetUTF8Bytes();
+            await stream.WriteAsync(messageBytes, 0, messageBytes.Length);
+        }
+
+        #endregion STREAM
+
+        #region PIPEWRITER
+
+        public static async Task WriteLineEndAsync(this PipeWriter pipeWriter, string message)
+        {
+            var messageBytes = (message + Environment.NewLine).GetUTF8Bytes();
+            await pipeWriter.WriteAsync(messageBytes);
+            await pipeWriter.FlushAsync();
+            await pipeWriter.CompleteAsync();
+        }
+
+        #endregion PIPEWRITER
 
     }
 }

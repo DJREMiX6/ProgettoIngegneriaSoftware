@@ -46,7 +46,8 @@ namespace ProgettoIngegneriaSoftware.Services
         /// or <c>null</c> if no <see cref="UserModel"/> with that specific Username has been found.</returns>
         public Task<UserModel?> GetAsync(string? username = null, string? email = null);
 
-        public Task<bool> ValidateAsync(string username, string password); 
+        public Task<bool> ValidatePasswordAsync(string username, string password);
+        public Task<bool> ValidatePasswordAsync(UserModel userModel, string password);
         public Task<bool> ExistsAsync(Guid id);
         public Task<bool> ExistsAsync(string? username = null, string? email = null);
 

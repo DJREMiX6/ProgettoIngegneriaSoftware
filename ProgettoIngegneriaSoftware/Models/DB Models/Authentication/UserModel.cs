@@ -43,13 +43,10 @@ namespace ProgettoIngegneriaSoftware.Models.DB_Models.Authentication
         [StringLength(maximumLength: EMAIL_MAX_LENGTH, MinimumLength = EMAIL_MIN_LENGTH)]
         public string Email { get; set; }
 
-        [Required]
-        public bool IsConfirmed { get; set; }
-        
-        public long? ConfirmationToken { get; set; }
+        [NotMapped] public bool IsConfirmed => ConfirmationToken == 0;
 
         [Required]
-        public virtual List<LoginTokenModel> LoginTokens { get; set; }
+        public long ConfirmationToken { get; set; }
 
         #endregion MODEL ATTRIBUTES
 

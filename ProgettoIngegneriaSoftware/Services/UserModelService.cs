@@ -48,7 +48,6 @@ namespace ProgettoIngegneriaSoftware.Services
                 Email = email,
                 PasswordHash = passwordHash,
                 Salt = salt,
-                IsConfirmed = false,
                 ConfirmationToken = confirmationToken
             };
             return await CreateAsync(newUserModel);
@@ -75,6 +74,11 @@ namespace ProgettoIngegneriaSoftware.Services
 
         public async Task<UserModel?> GetAsync(long confirmationToken)
         {
+            if (!confirmationToken.IsValidConfirmationToken())
+            {
+                return null;
+            }
+
             return await _authenticationDbContext.Users.FirstOrDefaultAsync(user =>
                 user.ConfirmationToken.Equals(confirmationToken));
         }
@@ -104,7 +108,7 @@ namespace ProgettoIngegneriaSoftware.Services
             return await _authenticationDbContext.Users.FirstOrDefaultAsync(user => user.Username.Equals(username));
         }
 
-        public async Task<bool> ValidateAsync(string username, string password)
+        public async Task<bool> ValidatePasswordAsync(string username, string password)
         {
             var user = await GetAsync(username: username);
             if (user is null)
@@ -113,6 +117,16 @@ namespace ProgettoIngegneriaSoftware.Services
             }
 
             return await _passwordHasher.VerifyPassword(password, user.PasswordHash, user.Salt, useSecret: true);
+        }
+
+        public async Task<bool> ValidatePasswordAsync(UserModel userModel, string password)
+        {
+            if (!await IsValidInStorage(userModel))
+            {
+                throw new InvalidOperationException($"{nameof(userModel)} not found in the storage.");
+            }
+
+            return await _passwordHasher.VerifyPassword(password, userModel.PasswordHash, userModel.Salt, useSecret: true);
         }
 
         public async Task<bool> ExistsAsync(Guid id)
@@ -185,8 +199,7 @@ namespace ProgettoIngegneriaSoftware.Services
             {
                 return null;
             }
-
-            userToConfirm.IsConfirmed = true;
+            
             userToConfirm.ConfirmationToken = 0;
 
             await _authenticationDbContext.SaveChangesAsync();
@@ -259,8 +272,6 @@ namespace ProgettoIngegneriaSoftware.Services
                 return null;
             }
 
-            userModel.Id = Guid.Empty;
-
             var addedUserEntity = await _authenticationDbContext.Users.AddAsync(userModel);
             await _authenticationDbContext.SaveChangesAsync();
 
@@ -289,6 +300,11 @@ namespace ProgettoIngegneriaSoftware.Services
             var queryUser = await GetAsync(confirmationToken);
             //If there is no user with the same confirmation token then it is a valid confirmation token
             return queryUser is null;
+        }
+
+        private async Task<bool> IsValidInStorage(UserModel userModel)
+        {
+            return await _authenticationDbContext.Users.ContainsAsync(userModel);
         }
 
         #endregion PRIVATE METHODS

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using ProgettoIngegneriaSoftware.Models;
 using ProgettoIngegneriaSoftware.Security;
 using ProgettoIngegneriaSoftware.Security.Argon2;
@@ -9,11 +10,12 @@ namespace ProgettoIngegneriaSoftware.Extensions
     public static class ServiceCollectionExtensionMethods
     {
 
-        public static IServiceCollection AddDatabaseContext(this IServiceCollection serviceCollection, IConfiguration configuration, bool useTempDb = false) 
+        public static IServiceCollection AddDatabaseContexts(this IServiceCollection serviceCollection, IConfiguration configuration, bool useTempDb = false) 
         {
             if (useTempDb)
             {
-                serviceCollection.AddDbContext<AuthenticationDbContext>(options => options.UseInMemoryDatabase("Test_ProgettoIngegneria_AutenticationDb"));
+                var assemblyName = Assembly.GetEntryAssembly().FullName;
+                serviceCollection.AddDbContext<AuthenticationDbContext>(options => options.UseInMemoryDatabase($"{assemblyName}_AuthenticationDB"));
             }
             else
             {
@@ -26,21 +28,16 @@ namespace ProgettoIngegneriaSoftware.Extensions
             return serviceCollection;
         }
 
-        public static IServiceCollection AddServices(this IServiceCollection serviceCollection)
-        {
+        public static IServiceCollection AddServices(this IServiceCollection serviceCollection) =>
+            serviceCollection.AddUserModelService()
+                .AddPasswordHasher();
+
+        public static IServiceCollection AddPasswordHasher(this IServiceCollection serviceCollection) =>
+            serviceCollection.AddTransient<IPasswordHasher, Argon2PasswordHasher>().
+                AddTransient<IPasswordHasherOptions, Argon2PasswordHasherOptions>();
+
+        public static IServiceCollection AddUserModelService(this IServiceCollection serviceCollection) =>
             serviceCollection.AddTransient<IUserModelService, UserModelService>();
-            serviceCollection.AddTransient<ILoginTokenModelService, LoginTokenModelService>();
-            serviceCollection.AddTransient<ITokenGeneratorService, TokenGeneratorService>();
 
-            return serviceCollection;
-        }
-
-        public static IServiceCollection AddPasswordHasher(this IServiceCollection serviceCollection)
-        {
-            serviceCollection.AddTransient<IPasswordHasher, Argon2PasswordHasher>();
-            serviceCollection.AddTransient<IPasswordHasherOptions, Argon2PasswordHasherOptions>();
-
-            return serviceCollection;
-        }
     }
 }
