@@ -7,6 +7,7 @@ using ProgettoIngegneriaSoftware.Utils.Consts;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
+using ProgettoIngegneriaSoftware.Models.DB_Models.Authentication;
 
 namespace ProgettoIngegneriaSoftware.Controllers
 {
@@ -21,15 +22,17 @@ namespace ProgettoIngegneriaSoftware.Controllers
 
         private readonly ILogger<LoginRegisterController> _logger;
         private readonly IUserModelService _userModelService;
+        private readonly IUserAuthenticationService _userAuthenticationService;
 
         #endregion PRIVATE READONLY DI FIELDS
 
         #region CTORS
 
-        public LoginRegisterController(ILogger<LoginRegisterController> logger, IUserModelService userModelService)
+        public LoginRegisterController(ILogger<LoginRegisterController> logger, IUserModelService userModelService, IUserAuthenticationService userAuthenticationService)
         {
             _logger = logger;
             _userModelService = userModelService;
+            _userAuthenticationService = userAuthenticationService;
         }
 
         #endregion CTORS
@@ -43,8 +46,7 @@ namespace ProgettoIngegneriaSoftware.Controllers
         public async Task<IActionResult> SignUp([FromBody] UserModelRecord userModelRecord)
         {
             //Checks if a user is already logged in
-            var userAlreadyLoggedInUsername = HttpContext.User.FindFirst("username")?.Value;
-            if (userAlreadyLoggedInUsername is not null)
+            if (IsUserAuthenticated())
             {
                 return Unauthorized("User already logged in.");
             }
@@ -81,8 +83,7 @@ namespace ProgettoIngegneriaSoftware.Controllers
         public async Task<IActionResult> SignIn([FromHeader] string username, [FromHeader] string password)
         {
             //Checks if a user is already logged in
-            var userAlreadyLoggedInUsername = HttpContext.User.FindFirst("username")?.Value;
-            if (userAlreadyLoggedInUsername is not null)
+            if (IsUserAuthenticated())
             {
                 return Unauthorized("User already logged in.");
             }
@@ -107,10 +108,7 @@ namespace ProgettoIngegneriaSoftware.Controllers
             }
 
             //Creates necessary claims to sign in the user
-            var claims = new List<Claim> { new Claim("username", username) };
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+            await SignInAsync(user);
 
             return Ok("User logged in");
         }
@@ -121,14 +119,13 @@ namespace ProgettoIngegneriaSoftware.Controllers
         public new async Task<IActionResult> SignOut()
         {
             //Checks if a user is already logged in
-            var userAlreadyLoggedInUsername = HttpContext.User.FindFirst("username")?.Value;
-            if (userAlreadyLoggedInUsername is null)
+            if (!IsUserAuthenticated())
             {
                 return Unauthorized();
             }
 
             //Signs our the user
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await SignOutAsync();
             return Ok("User signed out correctly.");
         }
 
@@ -150,6 +147,19 @@ namespace ProgettoIngegneriaSoftware.Controllers
         }
 
         #endregion HTTP ACTIONS
+
+        #region PRIVATE METHODS
+
+        [NonAction]
+        private bool IsUserAuthenticated() => _userAuthenticationService.IsUserAuthenticated(HttpContext);
+
+        [NonAction]
+        private async Task SignInAsync(UserModel user) => await _userAuthenticationService.SignInAsync(HttpContext, user);
+
+        [NonAction]
+        private async Task SignOutAsync() => await _userAuthenticationService.SignOutAsync(HttpContext);
+
+        #endregion PRIVATE METHODS
 
     }
 }
