@@ -1,17 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProgettoIngegneriaSoftware.Models.DB_Models.Application;
 
 namespace ProgettoIngegneriaSoftware.Models
 {
     public class ApplicationDbContext : DbContext
     {
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-        {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-        }
-
-        //TODO
-        // PUBLIC MODELS EX: public DbSet<ExampleModelName> Examples { get; set; } 
+        public DbSet<EventModel> Events { get; set; }
 
     }
 }

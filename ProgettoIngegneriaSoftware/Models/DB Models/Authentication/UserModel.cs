@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using ProgettoIngegneriaSoftware.Models.DB_Models.Application;
 
 namespace ProgettoIngegneriaSoftware.Models.DB_Models.Authentication
 {
@@ -47,6 +48,12 @@ namespace ProgettoIngegneriaSoftware.Models.DB_Models.Authentication
 
         [Required]
         public long ConfirmationToken { get; set; }
+
+        [Required]
+        public ICollection<EventModel> AdministratedEvents { get; set; }
+
+        [Required]
+        public ICollection<EventModel> EventsSubscribed { get; set; }
 
         #endregion MODEL ATTRIBUTES
 
