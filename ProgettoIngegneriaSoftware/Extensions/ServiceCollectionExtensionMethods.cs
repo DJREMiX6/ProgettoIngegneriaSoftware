@@ -43,11 +43,15 @@ namespace ProgettoIngegneriaSoftware.Extensions
         public static IServiceCollection AddEventModelService(this IServiceCollection serviceCollection) =>
             serviceCollection.AddTransient<IEventModelService, EventModelService>();
 
+        public static IServiceCollection AddConfirmationEmailSenderService(this IServiceCollection serviceCollection) =>
+            serviceCollection.AddTransient<IConfirmationEmailSenderService, ConfirmationEmailSenderService>();
+
         public static IServiceCollection AddServices(this IServiceCollection serviceCollection) =>
             serviceCollection.AddUserModelService()
                 .AddPasswordServices()
                 .AddUserAuthenticationService()
-                .AddEventModelService();
+                .AddEventModelService()
+                .AddConfirmationEmailSenderService();
 
     }
 }
