@@ -33,5 +33,20 @@
         public static string GetApplicationConnectionString(this IConfiguration configuration) =>
             configuration.GetConnectionString("ApplicationDefaultConnection");
 
+        public static IConfigurationSection GetSmtpEmailConfirmationSection(this IConfiguration configuration) =>
+            configuration.GetSection("SmtpEmailConfirmation");
+
+        public static string GetSmtpEmailConfirmationServer(this IConfiguration configuration) =>
+            configuration.GetSmtpEmailConfirmationSection().GetValue<string>("Server");
+
+        public static int GetSmtpEmailConfirmationPort(this IConfiguration configuration) =>
+            configuration.GetSmtpEmailConfirmationSection().GetValue<int>("Port");
+
+        public static string GetSmtpEmailConfirmationUsername(this IConfiguration configuration) =>
+            configuration.GetSmtpEmailConfirmationSection().GetValue<string>("Username");
+
+        public static string GetSmtpEmailConfirmationPassword(this IConfiguration configuration) =>
+            configuration.GetSmtpEmailConfirmationSection().GetValue<string>("Password");
+
     }
 }
