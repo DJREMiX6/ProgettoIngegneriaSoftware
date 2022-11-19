@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Serilog;
 using Serilog.Events;
 using ProgettoIngegneriaSoftware.Extensions;
+using ProgettoIngegneriaSoftware.Models.DB_Models.Authentication.Records;
 using ProgettoIngegneriaSoftware.Services;
 
 Log.Logger = new LoggerConfiguration()
@@ -32,6 +33,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseDefaultAuthenticatedUser();
 }
 
 /*app.UseCustomAuthentication();*/
