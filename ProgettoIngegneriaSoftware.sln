@@ -5,7 +5,9 @@ VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgettoIngegneriaSoftware", "ProgettoIngegneriaSoftware\ProgettoIngegneriaSoftware.csproj", "{459ACBD7-C04E-413C-9F1C-FF9ABBE4E35E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgettoIngegneriaSoftware.Test", "ProgettoIngegneriaSoftwareTest\ProgettoIngegneriaSoftware.Test.csproj", "{BE938300-3C90-446D-AFE5-6C0DE9F7483A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgettoIngegneriaSoftware.Test", "ProgettoIngegneriaSoftwareTest\ProgettoIngegneriaSoftware.Test.csproj", "{BE938300-3C90-446D-AFE5-6C0DE9F7483A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgettoIngegneriaSoftware.UI", "ProgettoIngegneriaSoftware.UI\ProgettoIngegneriaSoftware.UI.csproj", "{724A99C6-429D-4974-AE81-2908C1467232}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,12 @@ Global
 		{BE938300-3C90-446D-AFE5-6C0DE9F7483A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE938300-3C90-446D-AFE5-6C0DE9F7483A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE938300-3C90-446D-AFE5-6C0DE9F7483A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{724A99C6-429D-4974-AE81-2908C1467232}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{724A99C6-429D-4974-AE81-2908C1467232}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{724A99C6-429D-4974-AE81-2908C1467232}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{724A99C6-429D-4974-AE81-2908C1467232}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{724A99C6-429D-4974-AE81-2908C1467232}.Release|Any CPU.Build.0 = Release|Any CPU
+		{724A99C6-429D-4974-AE81-2908C1467232}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
