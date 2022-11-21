@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProgettoIngegneriaSoftware.Models.DB_Models.Authentication;
+using ProgettoIngegneriaSoftware.Models.DB_Models.Authentication.Records;
 using ProgettoIngegneriaSoftware.Services;
 
 namespace ProgettoIngegneriaSoftware.Controllers
@@ -56,7 +58,31 @@ namespace ProgettoIngegneriaSoftware.Controllers
 
         #region UPDATE
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [HttpPatch("update-user-info", Name = "UpdateUserInfo")]
+        public async Task<IActionResult> UpdateUserInfo([FromBody]UserModelRecord updatedUserModel)
+        {
+            if (!IsUserAuthenticated())
+            {
+                return Unauthorized("User not signed in.");
+            }
 
+            var userToUpdateExists = await _userModelService.ExistsAsync(AuthenticatedUserId());
+            if (!userToUpdateExists)
+            {
+                return Unauthorized("The user does not exists.");
+            }
+
+            var updatedUser = await _userModelService.UpdateAsync(AuthenticatedUserId(), updatedUserModel);
+            if (updatedUser is null)
+            {
+                return BadRequest("Something went wrong");
+            }
+
+            return Ok(updatedUser);
+        }
 
         #endregion UPDATE
 
