@@ -1,22 +1,23 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using ProgettoIngegneriaSoftware.Attributes.DataAnnotation;
+using ProgettoIngegneriaSoftware.Models.DB_Models.Authentication.Abstraction;
 using ProgettoIngegneriaSoftware.Utils.Consts;
 
 namespace ProgettoIngegneriaSoftware.Models.DB_Models.Authentication.Records
 {
-    public record UserModelRecord
+    public record UserModelRecord : IEditableUserModel
     {
 
         private string _password;
         private string _confirmPassword;
 
         [Required(AllowEmptyStrings = false)]
-        [StringLength(maximumLength: UserModel.USERNAME_MAX_LENGTH, MinimumLength = UserModel.USERNAME_MIN_LENGTH)]
+        [StringLength(maximumLength: IUserModel.USERNAME_MAX_LENGTH, MinimumLength = IUserModel.USERNAME_MIN_LENGTH)]
         public string Username { get; set; }
 
         [Required(AllowEmptyStrings = false)]
         [EmailAddress]
-        [StringLength(UserModel.EMAIL_MAX_LENGTH, MinimumLength = UserModel.EMAIL_MIN_LENGTH)]
+        [StringLength(IUserModel.EMAIL_MAX_LENGTH, MinimumLength = IUserModel.EMAIL_MIN_LENGTH)]
         public string Email { get; set; }
 
         [Required(AllowEmptyStrings = false)]
@@ -38,7 +39,5 @@ namespace ProgettoIngegneriaSoftware.Models.DB_Models.Authentication.Records
             get => _confirmPassword;
             set => _confirmPassword = value.Trim();
         }
-
-        public bool IsValidPassword => Password.Equals(ConfirmPassword);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.IO.Pipelines;
 using System.Text;
+using ProgettoIngegneriaSoftware.Models.DB_Models.Authentication.Abstraction;
 
 namespace ProgettoIngegneriaSoftware.Utils.Extensions
 {
@@ -132,6 +133,13 @@ namespace ProgettoIngegneriaSoftware.Utils.Extensions
         }
 
         #endregion PIPEWRITER
+
+        #region IEditableUserModel
+
+        public static bool HasValidPassword(this IEditableUserModel editableUserModel) =>
+            string.Equals(editableUserModel.Password, editableUserModel.ConfirmPassword);
+
+        #endregion IEditableUserModel
 
     }
 }
