@@ -1,22 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ProgettoIngegneriaSoftware.Models.DB_Models.Application;
+using ProgettoIngegneriaSoftware.Models.DB_Models.Authentication.Abstraction;
 
 namespace ProgettoIngegneriaSoftware.Models.DB_Models.Authentication
 {
-    public class UserModel
+    public class UserModel : IUserModel, IReadableUseModel
     {
-
-        #region PUBLIC CONSTS
-
-        public const int USERNAME_MAX_LENGTH = 32;
-        public const int USERNAME_MIN_LENGTH = 3;
-        public const int EMAIL_MAX_LENGTH = 128;
-        public const int EMAIL_MIN_LENGTH = 6;
-        public const int PASSWORD_HASH_LENGTH = 128;
-        public const int SALT_LENGTH = 32;
-
-        #endregion PUBLIC CONSTS
 
         #region MODEL ATTRIBUTES
 
@@ -26,25 +16,23 @@ namespace ProgettoIngegneriaSoftware.Models.DB_Models.Authentication
         public Guid Id { get; set; }
 
         [Required(AllowEmptyStrings = false)]
-        [StringLength(maximumLength: USERNAME_MAX_LENGTH, MinimumLength = USERNAME_MIN_LENGTH)]
+        [StringLength(maximumLength: IUserModel.USERNAME_MAX_LENGTH, MinimumLength = IUserModel.USERNAME_MIN_LENGTH)]
         public string Username { get; set; }
 
         [Required]
-        [MaxLength(PASSWORD_HASH_LENGTH)]
-        [MinLength(PASSWORD_HASH_LENGTH)]
+        [MaxLength(IUserModel.PASSWORD_HASH_LENGTH)]
+        [MinLength(IUserModel.PASSWORD_HASH_LENGTH)]
         public byte[] PasswordHash { get; set; }
 
         [Required]
-        [MaxLength(SALT_LENGTH)]
-        [MinLength(SALT_LENGTH)]
+        [MaxLength(IUserModel.SALT_LENGTH)]
+        [MinLength(IUserModel.SALT_LENGTH)]
         public byte[] Salt { get; set; }
 
         [Required]
         [EmailAddress]
-        [StringLength(maximumLength: EMAIL_MAX_LENGTH, MinimumLength = EMAIL_MIN_LENGTH)]
+        [StringLength(maximumLength: IUserModel.EMAIL_MAX_LENGTH, MinimumLength = IUserModel.EMAIL_MIN_LENGTH)]
         public string Email { get; set; }
-
-        [NotMapped] public bool IsConfirmed => ConfirmationToken == 0;
 
         [Required]
         public long ConfirmationToken { get; set; }
@@ -56,6 +44,12 @@ namespace ProgettoIngegneriaSoftware.Models.DB_Models.Authentication
         public ICollection<EventModel> EventsSubscribed { get; set; }
 
         #endregion MODEL ATTRIBUTES
+
+        #region NOT MAPPED ATTRIBUTES
+
+        [NotMapped] public bool IsConfirmed => ConfirmationToken == 0;
+
+        #endregion NOT MAPPED ATTRIBUTES
 
     }
 }
