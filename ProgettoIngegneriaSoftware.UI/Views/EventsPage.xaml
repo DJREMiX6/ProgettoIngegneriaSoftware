@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ProgettoIngegneriaSoftware.UI.Views.EventsPage"
+             Title="EventsPage">
+    <ScrollView>
+        <VerticalStackLayout BackgroundColor="#FF701B">
+            <Frame BackgroundColor="#FDF8F5" Margin="20" Padding="0" HeightRequest="256" BorderColor="White">
+                <VerticalStackLayout>
+                    <Image HeightRequest="114" Aspect="AspectFill" Source="https://cache.umusic.com/_sites/_halo/zrskt/nwff/tstet.jpg" ></Image>
+                    <Label TextColor="#222222" FontSize="20" FontAttributes="Bold" Margin="10,0" Text="Taylor Swift Eras Tour"></Label>
+                    <Label TextColor="#484848" FontSize="10" Margin="10,0" HeightRequest="200">
+                        <Label.Text>
+                            Lorem Ipsum is simply dummy text of the printing and 
+                            typesetting
+                            industry. 
+                            Lorem Ipsum has been 
+                            the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum
+                        </Label.Text>
+                    </Label>
+                </VerticalStackLayout>
+            </Frame>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
