@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProgettoIngegneriaSoftware.Models.DB_Models.Application;
+using ProgettoIngegneriaSoftware.Shared.Library.Models.DB_Models.Application;
 
 namespace ProgettoIngegneriaSoftware.Models
 {

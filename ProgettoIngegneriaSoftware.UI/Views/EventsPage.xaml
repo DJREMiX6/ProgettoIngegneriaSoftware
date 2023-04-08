@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:ProgettoIngegneriaSoftware.UI.ViewModels"
+             xmlns:eventmodel="clr-namespace:ProgettoIngegneriaSoftware.UI.Models"
+             x:DataType="viewmodel:EventsViewModel"
+             x:Class="ProgettoIngegneriaSoftware.UI.Views.EventsPage"
+             Title="{Binding Title}">
+    <ContentPage.Content>
+        <CollectionView ItemsSource="{Binding Events}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="eventmodel:ReadableEventModel">
+                    <Grid Padding="10">
+                        <Frame HeightRequest="280"
+                               Padding="0"
+                               CornerRadius="8"
+                               BackgroundColor="White" >
+                            <Grid Padding="0" 
+                                  ColumnDefinitions="*,*,*"
+                                  RowDefinitions="120,*,*"> 
+                                <Image Source="{Binding ImageSource}"
+                                       Aspect="AspectFill"
+                                       Grid.ColumnSpan="3"
+                                       Grid.Row="0"/>
+
+                                <Button StyleClass="QrCodeButton" 
+                                        Margin="0,40,10,0"
+                                        Grid.Column="2"
+                                        Grid.Row="0"
+                                        Grid.RowSpan="2"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="End">
+                                    <Button.Shadow>
+                                        <Shadow Brush="{StaticResource BlackBrush}"
+                                                Radius="10"
+                                                Opacity=".25"
+                                                Offset="0,2"/>
+                                    </Button.Shadow>
+                                </Button>
+
+                                <Button Margin="0,40,60,0"
+                                        Grid.Column="2"
+                                        Grid.Row="0"
+                                        Grid.RowSpan="2"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="End"
+                                        IsEnabled="{Binding IsBookable}"
+                                        CornerRadius="100"
+                                        FontAttributes="Bold"
+                                        HeightRequest="40"
+                                        WidthRequest="80">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Style.Triggers>
+                                                <DataTrigger TargetType="Button" Binding="{Binding IsBookable}" Value="False">
+                                                    <Setter Property="BackgroundColor" Value="{StaticResource Gray500}" />
+                                                    <Setter Property="Text" Value="Full" />
+                                                </DataTrigger>
+                                                <DataTrigger TargetType="Button"  Binding="{Binding IsBooked}" Value="False">
+                                                    <Setter Property="BackgroundColor" Value="{StaticResource Accent}" />
+                                                    <Setter Property="TextColor" Value="{StaticResource White}" />
+                                                    <Setter Property="Text" Value="Follow" />
+                                                </DataTrigger>
+                                                <DataTrigger TargetType="Button"  Binding="{Binding IsBooked}" Value="True">
+                                                    <Setter Property="BackgroundColor" Value="{StaticResource Accent}" />
+                                                    <Setter Property="TextColor" Value="{StaticResource White}" />
+                                                    <Setter Property="Text" Value="Follow" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                    <Button.Shadow>
+                                        <Shadow Brush="{StaticResource BlackBrush}"
+                                                Radius="10"
+                                                Opacity=".25"
+                                                Offset="0,2"/>
+                                        </Button.Shadow>
+                                </Button>
+
+                            </Grid>
+
+                        </Frame>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </ContentPage.Content>
+</ContentPage>

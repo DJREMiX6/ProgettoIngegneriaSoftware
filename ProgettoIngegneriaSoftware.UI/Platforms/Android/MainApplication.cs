@@ -1,5 +1,7 @@
 ﻿using Android.App;
 using Android.Runtime;
+using Microsoft.Maui.Controls.Compatibility.Platform.Android;
+using Microsoft.Maui.Platform;
 
 namespace ProgettoIngegneriaSoftware.UI
 {
