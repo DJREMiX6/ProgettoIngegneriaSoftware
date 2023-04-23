@@ -4,11 +4,32 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:views="clr-namespace:ProgettoIngegneriaSoftware.UI.Views"
+    xmlns:viewmodels="clr-namespace:ProgettoIngegneriaSoftware.UI.ViewModels"
+    x:DataType="viewmodels:AppShellViewModel"
     Shell.FlyoutBehavior="Disabled">
-
+    <Shell.TitleView>
+        <Grid ColumnDefinitions="60,*,60">
+            <Button ImageSource="Resources/Images/Icons/hamburger_menu_icon.svg"
+                    Grid.Column="0"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    HorizontalOptions="Start"/>
+            <Image Source="Resources/Images/logo_name.svg"
+                   Aspect="AspectFit"
+                   Margin="40,12,40,12"
+                   Grid.Column="1"/>
+            <Button ImageSource="Resources/Images/Icons/camera_icon.svg"
+                    Grid.Column="2"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    HorizontalOptions="End"
+                    Margin="0,0,20,0"
+                    Command="{Binding OpenQrCodeScanPageCommand}"/>
+        </Grid>
+    </Shell.TitleView>
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate views:EventsPage}"
-        Route="Events/" />
+            ContentTemplate="{DataTemplate views:EventsPage}"
+            Route="EventsPage">
+    </ShellContent>
 
 </Shell>

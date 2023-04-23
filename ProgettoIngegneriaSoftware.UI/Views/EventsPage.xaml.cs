@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ProgettoIngegneriaSoftware.UI.ViewModels;
+﻿using ProgettoIngegneriaSoftware.UI.ViewModels;
 
 namespace ProgettoIngegneriaSoftware.UI.Views;
 
@@ -21,5 +16,14 @@ public partial class EventsPage : ContentPage
         InitializeComponent();
         _viewModel = viewModel;
         BindingContext = _viewModel;
+    }
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+        Dispatcher.DispatchAsync(async () =>
+        {
+            await ((EventsViewModel)BindingContext).NavigatedToCommand.ExecuteAsync(null);
+        });
     }
 }

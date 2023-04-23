@@ -7,9 +7,10 @@
         string Name { get; }
         string Description { get; }
         DateTime Date { get; }
+        string Location { get; }
         string ImageSource { get; }
         int Seats { get; }
         int BookedSeats { get; }
-        bool IsBooked { get; }
+        bool IsBookedByCurrentUser { get; }
     }
 }

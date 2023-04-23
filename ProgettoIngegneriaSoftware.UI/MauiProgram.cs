@@ -1,5 +1,4 @@
 ﻿using ProgettoIngegneriaSoftware.UI.Extensions;
-using ProgettoIngegneriaSoftware.UI.Pages;
 using ZXing.Net.Maui.Controls;
 
 #if ANDROID
@@ -17,7 +16,6 @@ namespace ProgettoIngegneriaSoftware.UI
                 .UseMauiApp<App>()
                 .RegisterServices()
                 .UseBarcodeReader()
-                .AddConfiguration()
                 .AddPages()
                 .ConfigureFonts(fonts =>
                 {

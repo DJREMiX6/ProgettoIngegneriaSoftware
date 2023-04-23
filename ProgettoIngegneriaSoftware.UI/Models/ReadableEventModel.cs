@@ -1,17 +1,17 @@
-﻿using ProgettoIngegneriaSoftware.Shared.Library.Models.DB_Models.Application.Abstraction;
+﻿namespace ProgettoIngegneriaSoftware.UI.Models;
 
-namespace ProgettoIngegneriaSoftware.UI.Models;
-
-class ReadableEventModel : IReadableEventModel
+public class ReadableEventModel
 {
-    public Guid Id { get; }
-    public Guid CreatorId { get; }
-    public string Name { get; }
-    public string Description { get; }
-    public DateTime Date { get; }
-    public string ImageSource { get; }
-    public int Seats { get; }
-    public int BookedSeats { get; }
-    public bool IsBooked { get; }
-    public bool IsBookable => BookedSeats < Seats && !IsBooked;
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public DateTime Date { get; set; }
+    public string Location { get; set; }
+    public string ImageSource { get; set; }
+    public int Seats { get; set; }
+    public int BookedSeats { get; set; }
+    public bool IsBookedByCurrentUser { get; set; }
+    public bool IsFull => BookedSeats >= Seats;
+    public bool IsBookable => !IsFull && !IsBookedByCurrentUser;
+    public string DisplaySeats => $"{BookedSeats}/{Seats}";
 }

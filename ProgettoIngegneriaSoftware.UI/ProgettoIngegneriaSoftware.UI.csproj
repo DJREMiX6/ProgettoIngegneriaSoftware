@@ -18,7 +18,7 @@
 		<ApplicationIdGuid>5cc904a3-7700-4c25-b519-87db5184c3a3</ApplicationIdGuid>
 
 		<!-- Versions -->
-      	<LangVersion>11</LangVersion>
+    <LangVersion>11.0</LangVersion>
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 
@@ -53,6 +53,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\Images\Icons\accept_icon.svg" />
+	  <None Remove="Resources\Images\Icons\camera_icon.svg" />
+	  <None Remove="Resources\Images\Icons\hamburger_menu_icon.svg" />
 	  <None Remove="Resources\Images\logo_medium.svg" />
 	  <None Remove="Resources\Images\logo_name.svg" />
 	  <None Remove="Resources\Images\Splash screen.svg" />
@@ -68,21 +71,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\ProgettoIngegneriaSoftware.Shared.Library\ProgettoIngegneriaSoftware.Shared.Library.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Compile Update="Pages\QrCodeScanPage.xaml.cs">
-	    <DependentUpon>QrCodeScanPage.xaml</DependentUpon>
+	  <Compile Update="Views\QrCodeScanView.xaml.cs">
+	    <DependentUpon>QrCodeScanView.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Pages\Authentication\RegisterPage.xaml.cs">
-	    <DependentUpon>RegisterPage.xaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Pages\TestPage.xaml.cs">
-	    <DependentUpon>TestPage.xaml</DependentUpon>
+	  <Compile Update="Views\EventDetailView.xaml.cs">
+	    <DependentUpon>EventDetailView.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\EventsPage.xaml.cs">
 	    <DependentUpon>EventsPage.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\QrCodeDetailView.xaml.cs">
+	    <DependentUpon>QrCodeDetailView.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
@@ -93,16 +92,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Pages\QrCodeScanPage.xaml">
+	  <MauiXaml Update="Views\QrCodeScanView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\EventDetailView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\EventsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <MauiImage Include="Resources\Images\Icons\qr_code_button_icon.svg" />
 	</ItemGroup>
 
 </Project>

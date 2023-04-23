@@ -8,82 +8,255 @@
              x:Class="ProgettoIngegneriaSoftware.UI.Views.EventsPage"
              Title="{Binding Title}">
     <ContentPage.Content>
-        <CollectionView ItemsSource="{Binding Events}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="eventmodel:ReadableEventModel">
-                    <Grid Padding="10">
-                        <Frame HeightRequest="280"
+        <RefreshView x:Name="EventsRefreshView"
+                     Command="{Binding Refresh_EventsRefreshViewCommand}"
+                     CommandParameter="{Binding Source={x:Reference EventsRefreshView}, Path=.}">
+            <CollectionView ItemsSource="{Binding Events}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="eventmodel:ReadableEventModel">
+                        <Grid Padding="10">
+                            <Frame HeightRequest="250"
                                Padding="0"
                                CornerRadius="8"
                                BackgroundColor="White" >
-                            <Grid Padding="0" 
+                                <Frame.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:EventsViewModel}}, Path=OpenEventDetailViewCommand}"
+                                                      CommandParameter="{Binding .}"/>
+                                </Frame.GestureRecognizers>
+                                <Grid Padding="0" 
                                   ColumnDefinitions="*,*,*"
-                                  RowDefinitions="120,*,*"> 
-                                <Image Source="{Binding ImageSource}"
+                                  RowDefinitions="115,85,50">
+                                    <Image Source="{Binding ImageSource}"
                                        Aspect="AspectFill"
+                                       HeightRequest="115"
+                                       VerticalOptions="Start"
                                        Grid.ColumnSpan="3"
                                        Grid.Row="0"/>
 
-                                <Button StyleClass="QrCodeButton" 
-                                        Margin="0,40,10,0"
+                                    <Button StyleClass="QrCodeButton" 
+                                        Margin="0,-20,10,0"
                                         Grid.Column="2"
-                                        Grid.Row="0"
-                                        Grid.RowSpan="2"
-                                        VerticalOptions="Center"
-                                        HorizontalOptions="End">
-                                    <Button.Shadow>
-                                        <Shadow Brush="{StaticResource BlackBrush}"
-                                                Radius="10"
-                                                Opacity=".25"
-                                                Offset="0,2"/>
-                                    </Button.Shadow>
-                                </Button>
-
-                                <Button Margin="0,40,60,0"
-                                        Grid.Column="2"
-                                        Grid.Row="0"
-                                        Grid.RowSpan="2"
-                                        VerticalOptions="Center"
+                                        Grid.Row="1"
+                                        VerticalOptions="Start"
                                         HorizontalOptions="End"
-                                        IsEnabled="{Binding IsBookable}"
-                                        CornerRadius="100"
-                                        FontAttributes="Bold"
-                                        HeightRequest="40"
-                                        WidthRequest="80">
-                                    <Button.Style>
-                                        <Style TargetType="Button">
-                                            <Style.Triggers>
-                                                <DataTrigger TargetType="Button" Binding="{Binding IsBookable}" Value="False">
-                                                    <Setter Property="BackgroundColor" Value="{StaticResource Gray500}" />
-                                                    <Setter Property="Text" Value="Full" />
-                                                </DataTrigger>
-                                                <DataTrigger TargetType="Button"  Binding="{Binding IsBooked}" Value="False">
-                                                    <Setter Property="BackgroundColor" Value="{StaticResource Accent}" />
-                                                    <Setter Property="TextColor" Value="{StaticResource White}" />
-                                                    <Setter Property="Text" Value="Follow" />
-                                                </DataTrigger>
-                                                <DataTrigger TargetType="Button"  Binding="{Binding IsBooked}" Value="True">
-                                                    <Setter Property="BackgroundColor" Value="{StaticResource Accent}" />
-                                                    <Setter Property="TextColor" Value="{StaticResource White}" />
-                                                    <Setter Property="Text" Value="Follow" />
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Button.Style>
-                                    <Button.Shadow>
-                                        <Shadow Brush="{StaticResource BlackBrush}"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:EventsViewModel}}, Path=OpenQrCodeDetailViewCommand}"
+                                        CommandParameter="{Binding .}">
+                                        <Button.Shadow>
+                                            <Shadow Brush="{StaticResource BlackBrush}"
                                                 Radius="10"
                                                 Opacity=".25"
                                                 Offset="0,2"/>
                                         </Button.Shadow>
-                                </Button>
+                                    </Button>
 
-                            </Grid>
+                                    <Button Margin="0,-20,60,0"
+                                        Grid.Column="2"
+                                        Grid.Row="1"
+                                        VerticalOptions="Start"
+                                        HorizontalOptions="End"
+                                        CornerRadius="100"
+                                        FontAttributes="Bold"
+                                        HeightRequest="40"
+                                        WidthRequest="80"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:EventsViewModel}}, Path=ClickedOnEventCommand}"
+                                        CommandParameter="{Binding .}">
+                                        <Button.Triggers>
+                                            <MultiTrigger TargetType="Button">
+                                                <MultiTrigger.Conditions>
+                                                    <BindingCondition Binding="{Binding IsBookable}" Value="True" />
+                                                    <BindingCondition Binding="{Binding IsBookedByCurrentUser}" Value="False" />
+                                                </MultiTrigger.Conditions>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Accent}" />
+                                                <Setter Property="TextColor" Value="{StaticResource White}" />
+                                                <Setter Property="Text" Value="Follow" />
+                                                <Setter Property="ImageSource" Value="null" />
+                                            </MultiTrigger>
 
-                        </Frame>
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+                                            <MultiTrigger TargetType="Button">
+                                                <MultiTrigger.Conditions>
+                                                    <BindingCondition Binding="{Binding IsBookable}" Value="True" />
+                                                    <BindingCondition Binding="{Binding IsBookedByCurrentUser}" Value="True" />
+                                                </MultiTrigger.Conditions>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Tertiary}" />
+                                                <Setter Property="Text" Value="" />
+                                                <Setter Property="ImageSource" Value="Resources/Images/Icons/accept_icon.svg" />
+                                                <Setter Property="WidthRequest" Value="40" />
+                                            </MultiTrigger>
+
+                                            <MultiTrigger TargetType="Button">
+                                                <MultiTrigger.Conditions>
+                                                    <BindingCondition Binding="{Binding IsBookable}" Value="False" />
+                                                    <BindingCondition Binding="{Binding IsBookedByCurrentUser}" Value="True" />
+                                                </MultiTrigger.Conditions>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Tertiary}" />
+                                                <Setter Property="Text" Value="" />
+                                                <Setter Property="ImageSource" Value="Resources/Images/Icons/accept_icon.svg" />
+                                                <Setter Property="WidthRequest" Value="40" />
+                                            </MultiTrigger>
+
+                                            <MultiTrigger TargetType="Button">
+                                                <MultiTrigger.Conditions>
+                                                    <BindingCondition Binding="{Binding IsBookable}" Value="False" />
+                                                    <BindingCondition Binding="{Binding IsBookedByCurrentUser}" Value="False" />
+                                                </MultiTrigger.Conditions>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Gray500}" />
+                                                <Setter Property="Text" Value="Full" />
+                                                <Setter Property="ImageSource" Value="null" />
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </MultiTrigger>
+                                        </Button.Triggers>
+                                        <Button.Shadow>
+                                            <Shadow Brush="{StaticResource BlackBrush}"
+                                                Radius="10"
+                                                Opacity=".25"
+                                                Offset="0,2"/>
+                                        </Button.Shadow>
+                                    </Button>
+
+                                    <Label Text="{Binding Name}"
+                                       LineBreakMode="TailTruncation"
+                                       FontSize="20"
+                                       FontAttributes="Bold"
+                                       Margin="10,0,15,0"
+                                       Grid.ColumnSpan="2"
+                                       Grid.Column="0"
+                                       Grid.Row="1" />
+
+                                    <Label Text="{Binding Description}"
+                                       LineBreakMode="WordWrap"
+                                       FontSize="10"
+                                       Grid.Column="0"
+                                       Grid.ColumnSpan="3"
+                                       Grid.Row="1"
+                                       VerticalOptions="End"
+                                       Margin="10,10,10,0"
+                                       HeightRequest="55"/>
+
+                                    <Label Text="Date"
+                                       FontSize="14"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource Primary}"
+                                       Grid.Row="2"
+                                       Grid.Column="0"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Start"
+                                       Margin="0,2,0,0"/>
+
+                                    <Label Text="{Binding Date}"
+                                       TextColor="{StaticResource Gray500}"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center"
+                                       FontSize="10"
+                                       Grid.Row="2"
+                                       Grid.Column="0"
+                                       VerticalOptions="End"
+                                       HorizontalOptions="Center"
+                                       Margin="0,0,0,10"/>
+
+                                    <BoxView Color="{StaticResource Gray300}"
+                                         Grid.Row="2"
+                                         Grid.Column="0"
+                                         WidthRequest="1"
+                                         Margin="0,3,0,3"
+                                         HorizontalOptions="End">
+                                        <BoxView.Shadow>
+                                            <Shadow Brush="{StaticResource BlackBrush}"
+                                                Radius="10"
+                                                Opacity=".25"
+                                                Offset="0,-2" />
+                                        </BoxView.Shadow>
+                                    </BoxView>
+
+                                    <BoxView Color="{StaticResource Gray300}"
+                                         Grid.Row="2"
+                                         Grid.Column="1"
+                                         WidthRequest="1"
+                                         Margin="0,3,0,3"
+                                         HorizontalOptions="Start">
+                                        <BoxView.Shadow>
+                                            <Shadow Brush="{StaticResource BlackBrush}"
+                                                Radius="10"
+                                                Opacity=".25"
+                                                Offset="0,2" />
+                                        </BoxView.Shadow>
+                                    </BoxView>
+
+                                    <Label Text="Where"
+                                       FontSize="14"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource Primary}"
+                                       Grid.Row="2"
+                                       Grid.Column="1"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Start"
+                                       Margin="0,2,0,0"/>
+
+                                    <Label Text="{Binding Location}"
+                                       TextColor="{StaticResource Gray500}"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center"
+                                       FontSize="10"
+                                       Grid.Row="2"
+                                       Grid.Column="1"
+                                       VerticalOptions="End"
+                                       HorizontalOptions="Center"
+                                       Margin="0,0,0,5"/>
+
+                                    <BoxView Color="{StaticResource Gray300}"
+                                         Grid.Row="2"
+                                         Grid.Column="1"
+                                         WidthRequest="1"
+                                         Margin="0,3,0,3"
+                                         HorizontalOptions="End">
+                                        <BoxView.Shadow>
+                                            <Shadow Brush="{StaticResource BlackBrush}"
+                                                Radius="10"
+                                                Opacity=".25"
+                                                Offset="0,-2" />
+                                        </BoxView.Shadow>
+                                    </BoxView>
+
+                                    <BoxView Color="{StaticResource Gray300}"
+                                         Grid.Row="2"
+                                         Grid.Column="2"
+                                         WidthRequest="1"
+                                         Margin="0,3,0,3"
+                                         HorizontalOptions="Start">
+                                        <BoxView.Shadow>
+                                            <Shadow Brush="{StaticResource BlackBrush}"
+                                                Radius="10"
+                                                Opacity=".25"
+                                                Offset="0,2" />
+                                        </BoxView.Shadow>
+                                    </BoxView>
+
+                                    <Label Text="Seats"
+                                       FontSize="14"
+                                       FontAttributes="Bold"
+                                       TextColor="{StaticResource Primary}"
+                                       Grid.Row="2"
+                                       Grid.Column="2"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Start"
+                                       Margin="0,2,0,0"/>
+
+                                    <Label Text="{Binding DisplaySeats}"
+                                       TextColor="{StaticResource Gray500}"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center"
+                                       FontSize="10"
+                                       Grid.Row="2"
+                                       Grid.Column="2"
+                                       VerticalOptions="End"
+                                       HorizontalOptions="Center"
+                                       Margin="0,0,0,10"/>
+
+                                </Grid>
+                            </Frame>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
     </ContentPage.Content>
 </ContentPage>

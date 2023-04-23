@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
+             xmlns:viewmodels="clr-namespace:ProgettoIngegneriaSoftware.UI.ViewModels"
+             x:DataType="viewmodels:QrCodeScanPageViewModel"
+             x:Class="ProgettoIngegneriaSoftware.UI.Views.QrCodeScanPage"
+             Shell.PresentationMode="ModalAnimated">
+    <ContentPage.Content>
+        <Grid RowDefinitions="*"
+              ColumnDefinitions="*">
+            <zxing:CameraBarcodeReaderView 
+                x:Name="cameraBarcodeReaderView"
+                BarcodesDetected="CameraBarcodeReaderView_OnBarcodesDetected"
+                VerticalOptions="Fill"
+                HorizontalOptions="Fill"
+                Grid.Row="0" />
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:zxing="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
+             xmlns:viewmodel="clr-namespace:ProgettoIngegneriaSoftware.UI.ViewModels"
+             x:DataType="viewmodel:QrCodeDetailViewModel"
+             x:Class="ProgettoIngegneriaSoftware.UI.Views.QrCodeDetailView"
+             Shell.PresentationMode="ModalAnimated">
+    <ContentPage.Content>
+        <Grid ColumnDefinitions="*,300,*"
+              RowDefinitions="*,300,*">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer
+                    Command="{Binding GoBackCommand}"/>
+            </Grid.GestureRecognizers>
+            <Frame Grid.Column="1"
+                   Grid.Row="1">
+                <zxing:BarcodeGeneratorView
+                    WidthRequest="300"
+                    HeightRequest="300"
+                    Value="{Binding EventId}"
+                    Format="QrCode"/>
+            </Frame>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

@@ -28,6 +28,8 @@ public class EventModel : IEventModel
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
 
+    public Guid CreatorId { get; }
+
     [Required(AllowEmptyStrings = false)]
     [StringLength(IEventModel.EVENT_NAME_MAX_LENGTH, MinimumLength = IEventModel.EVENT_NAME_MIN_LENGTH)]
     public string Name { get; set; }
@@ -40,6 +42,8 @@ public class EventModel : IEventModel
     [DataType(DataType.DateTime)]
     public DateTime Date { get; set; }
 
+    public string Location { get; set; }
+
     [Required]
     public int Seats { get; set; }
 
@@ -47,4 +51,7 @@ public class EventModel : IEventModel
 
     [NotMapped]
     public int BookedSeats { get; }
+
+    [NotMapped]
+    public bool IsBookedByCurrentUser { get; }
 }
