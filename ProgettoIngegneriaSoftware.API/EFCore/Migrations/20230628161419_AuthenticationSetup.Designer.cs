@@ -9,7 +9,7 @@ using ProgettoIngegneriaSoftware.API;
 
 #nullable disable
 
-namespace ProgettoIngegneriaSoftware.API
+namespace ProgettoIngegneriaSoftware.API.EFCore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20230628161419_AuthenticationSetup")]

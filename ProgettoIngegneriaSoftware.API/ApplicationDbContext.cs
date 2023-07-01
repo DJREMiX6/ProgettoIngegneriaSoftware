@@ -15,6 +15,12 @@ public class ApplicationDbContext : DbContext
     #region DBSETS
 
     public DbSet<UserEntityModel> Users { get; set; }
+    public DbSet<PlaceEntityModel> Places { get; set; }
+    public DbSet<EventEntityModel> Events { get; set; }
+    public DbSet<SeatsZoneEntityModel> SeatsZones { get; set; }
+    public DbSet<SeatsRowEntityModel> SeatsRows { get; set; }
+    public DbSet<SeatEntityModel> Seats { get; set; }
+    public DbSet<BookedSeatEntityModel> BookedSeats { get; set; }
 
     #endregion DBSETS
 

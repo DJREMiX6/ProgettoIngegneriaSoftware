@@ -10,7 +10,7 @@ public class UserEntityModel
     #region ENTITY ATTRIBUTES
 
     [Key]
-    [Required(AllowEmptyStrings = false)]
+    [Required]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
 
@@ -23,16 +23,22 @@ public class UserEntityModel
     [StringLength(maximumLength: ModelsConsts.USER_INFO_EMAIL_MAX_LENGTH, MinimumLength = ModelsConsts.USER_INFO_EMAIL_MIN_LENGTH)]
     public string Email { get; set; }
 
-    [Required(AllowEmptyStrings = false)]
+    [Required]
     [MinLength(ModelsConsts.USER_INFO_PASSWORD_HASH_LENGTH)]
     [MaxLength(ModelsConsts.USER_INFO_PASSWORD_HASH_LENGTH)]
     public byte[] PasswordHash { get; set; }
 
-    [Required(AllowEmptyStrings = false)]
+    [Required]
     [MinLength(ModelsConsts.USER_INFO_PASSWORD_SALT_LENGTH)]
     [MaxLength(ModelsConsts.USER_INFO_PASSWORD_SALT_LENGTH)]
     public byte[] PasswordSalt { get; set; }
 
     #endregion ENTITY ATTRIBUTES
+
+    #region NAVIGATION PROPERTIES
+
+    public List<BookedSeatEntityModel> BookedSeats { get; } = new();
+
+    #endregion NAVIGATION PROPERTIES
 
 }

@@ -1,9 +1,8 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ProgettoIngegneriaSoftware.API
+namespace ProgettoIngegneriaSoftware.API.EFCore.Migrations
 {
     /// <inheritdoc />
     public partial class AuthenticationSetup : Migration

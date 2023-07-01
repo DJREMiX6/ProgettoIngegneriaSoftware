@@ -1,8 +1,31 @@
-﻿namespace ProgettoIngegneriaSoftware.API.Models.DB;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ProgettoIngegneriaSoftware.API.Models.DB;
 
 public class SeatEntityModel
 {
+
+    #region ENTITY ATTRIBUTES
+
+    [Key]
+    [Required]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
+    [Required]
     public int Index { get; set; }
+
+    #endregion ENTITY ATTRIBUTES
+
+    #region NAVIGATION PROPERTIES
+
+    [Required]
+    [ForeignKey(nameof(Row))]
+    public Guid SeatsRowId { get; set; }
     public SeatsRowEntityModel Row { get; set; }
-}//TODO ADD DATA ANNOTATIONS TO THE NEW MODELS AND CREATE A MIGRATION WITH RELATIONS
+
+    public List<BookedSeatEntityModel> BookedSeats { get; } = new();
+
+    #endregion NAVIGATION PROPERTIES
+
+}
