@@ -1,4 +1,5 @@
 ﻿using ProgettoIngegneriaSoftware.API.Services.AuthenticationService;
+using ProgettoIngegneriaSoftware.API.Services.EventService;
 using ProgettoIngegneriaSoftware.API.Services.RegistrationService;
 using ProgettoIngegneriaSoftware.API.Services.UserEntityModelService;
 
@@ -13,8 +14,13 @@ public static class ServicesExtensions
         services.AddScoped<IAuthenticationService, CookieBasedAuthenticationService>();
 
     public static IServiceCollection AddModelsServices(this IServiceCollection services) =>
-        services.AddUserEntityModelService();
+        services
+            .AddUserEntityModelService()
+            .AddEventsService();
 
     private static IServiceCollection AddUserEntityModelService(this IServiceCollection services) =>
         services.AddScoped<IUserEntityModelService, EntityFrameworkUserEntityModelService>();
+
+    public static IServiceCollection AddEventsService(this IServiceCollection services) =>
+        services.AddScoped<IEventsService, EventService.EventService>();
 }
