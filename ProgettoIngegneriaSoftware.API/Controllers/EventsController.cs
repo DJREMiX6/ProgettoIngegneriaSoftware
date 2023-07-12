@@ -33,7 +33,6 @@ public class EventsController : ControllerBase
     #region API ENDPOINTS
 
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpGet("events", Name = "GetEvents")]
     public async Task<IActionResult> GetEvents()
@@ -42,6 +41,24 @@ public class EventsController : ControllerBase
             return Unauthorized("User not logged in.");
 
         return Ok(await _eventsService.GetEvents(_authenticationService.AuthenticatedUserId(HttpContext)));
+    }
+
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpGet("event", Name = "GetEvent")]
+    public async Task<IActionResult> GetEvent([FromQuery] Guid eventId)
+    {
+        if (!_authenticationService.IsUserAuthenticated(HttpContext))
+            return Unauthorized("User not logged in.");
+
+        var requestedEvent =
+            await _eventsService.GetEvent(eventId, _authenticationService.AuthenticatedUserId(HttpContext));
+
+        if (requestedEvent == null)
+            return NotFound();
+
+        return Ok(requestedEvent);
     }
 
     #endregion API ENDPOINTS

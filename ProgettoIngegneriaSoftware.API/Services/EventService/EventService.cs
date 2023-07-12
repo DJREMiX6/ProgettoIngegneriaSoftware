@@ -1,4 +1,5 @@
-﻿using ProgettoIngegneriaSoftware.API.Models;
+﻿using Microsoft.Extensions.Logging;
+using ProgettoIngegneriaSoftware.API.Models;
 using ProgettoIngegneriaSoftware.API.Models.DB;
 using ProgettoIngegneriaSoftware.API.Models.HelperModels;
 
@@ -26,36 +27,23 @@ public class EventService : IEventsService
 
     #region  IEventService IMPLEMENTATION
 
-    public async Task<IList<EventResult>> GetEvents(Guid userId)
-    {
-        var eventsFromDb = _applicationDbContext.Events.ToList();
-        var events = new List<EventResult>();
-        foreach (var eventFromDb in eventsFromDb)
+    public Task<IList<EventResult>> GetEvents(Guid userId) =>
+        Task.Run(() =>
         {
-            var placeName = GetPlaceEntityModel(eventFromDb.PlaceId).Name;
-            var totalSeatsCount = GetTotalSeatsCount(eventFromDb);
-            var availableSeats = GetAvailableSeats(eventFromDb);
-            var bookedSeat = GetUserBookedSeat(eventFromDb, userId);
-            events.Add(new EventResult()
-            {
-                Name = eventFromDb.Name,
-                Description = eventFromDb.Description,
-                Date = eventFromDb.Date,
-                Location = placeName,
-                ImageSource = eventFromDb.ImageSrc,
-                TotalSeatsCount = totalSeatsCount,
-                AvailableSeats = availableSeats,
-                BookedSeat = bookedSeat
-            });
-        }
+            var eventsFromDb = _applicationDbContext.Events.ToList();
+            IList<EventResult> events = new List<EventResult>();
+            foreach (var eventFromDb in eventsFromDb)
+                events.Add(CreateEventResult(eventFromDb, userId));
 
-        return events;
-    }
+            return events;
+        });
 
-    public async Task<EventResult> GetEvent(Guid eventId, Guid userId)
-    {
-        throw new NotImplementedException();
-    }
+    public Task<EventResult?> GetEvent(Guid eventId, Guid userId) =>
+        Task.Run(() =>
+        {
+            var eventFromDb = _applicationDbContext.Events.Find(eventId);
+            return eventFromDb == null ? null : CreateEventResult(eventFromDb, userId);
+        });
 
     #endregion IEventService IMPLEMENTATION
 
@@ -184,6 +172,26 @@ public class EventService : IEventsService
                 SeatIndex = seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatIndex
             })
             .ToList();
+    }
+
+    private EventResult CreateEventResult(EventEntityModel eventEntityModel, Guid userId)
+    {
+        var placeName = GetPlaceEntityModel(eventEntityModel.PlaceId).Name;
+        var totalSeatsCount = GetTotalSeatsCount(eventEntityModel);
+        var availableSeats = GetAvailableSeats(eventEntityModel);
+        var bookedSeat = GetUserBookedSeat(eventEntityModel, userId);
+        return new EventResult()
+        {
+            Id = eventEntityModel.Id,
+            Name = eventEntityModel.Name,
+            Description = eventEntityModel.Description,
+            Date = eventEntityModel.Date,
+            Location = placeName,
+            ImageSource = eventEntityModel.ImageSrc,
+            TotalSeatsCount = totalSeatsCount,
+            AvailableSeats = availableSeats,
+            BookedSeat = bookedSeat
+        };
     }
 
     #endregion METHODS
