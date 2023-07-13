@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
+using ProgettoIngegneriaSoftware.API.Models;
 using ProgettoIngegneriaSoftware.API.Services.AuthenticationService;
 using ProgettoIngegneriaSoftware.API.Services.EventService;
+using ProgettoIngegneriaSoftware.API.Services.EventService.Exceptions;
 
 namespace ProgettoIngegneriaSoftware.API.Controllers;
 
@@ -34,7 +36,7 @@ public class EventsController : ControllerBase
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpGet("events", Name = "GetEvents")]
+    [HttpGet("", Name = "GetEvents")]
     public async Task<IActionResult> GetEvents()
     {
         if (!_authenticationService.IsUserAuthenticated(HttpContext))
@@ -46,18 +48,22 @@ public class EventsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpGet("event", Name = "GetEvent")]
+    [HttpGet("", Name = "GetEvent")]
     public async Task<IActionResult> GetEvent([FromQuery] Guid eventId)
     {
         if (!_authenticationService.IsUserAuthenticated(HttpContext))
             return Unauthorized("User not logged in.");
 
-        var requestedEvent =
-            await _eventsService.GetEvent(eventId, _authenticationService.AuthenticatedUserId(HttpContext));
+        EventResult? requestedEvent = null;
 
-        if (requestedEvent == null)
+        try
+        {
+            requestedEvent = await _eventsService.GetEvent(eventId, _authenticationService.AuthenticatedUserId(HttpContext));
+        }
+        catch(EventNotFoundException)
+        {
             return NotFound();
-
+        }
         return Ok(requestedEvent);
     }
 

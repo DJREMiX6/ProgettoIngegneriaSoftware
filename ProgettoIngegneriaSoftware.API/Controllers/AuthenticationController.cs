@@ -38,7 +38,7 @@ public class AuthenticationController : ControllerBase
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [HttpPost("register", Name = "Register")]
+    [HttpPost("signup", Name = "Register")]
     public async Task<IActionResult> Register([FromBody]RegisterUserInfo registerUserInfo)
     {
         try
