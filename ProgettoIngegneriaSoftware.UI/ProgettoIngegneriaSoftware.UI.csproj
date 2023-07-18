@@ -83,6 +83,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\ProgettoIngegneriaSoftware.Shared.Library\ProgettoIngegneriaSoftware.Shared.Library.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Compile Update="Views\QrCodeScanView.xaml.cs">
 	    <DependentUpon>QrCodeScanView.xaml</DependentUpon>
 	  </Compile>
