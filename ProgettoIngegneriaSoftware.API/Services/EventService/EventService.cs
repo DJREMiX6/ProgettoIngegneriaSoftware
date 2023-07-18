@@ -81,6 +81,7 @@ public class EventService : IEventsService
                     SeatId = seatsEntityModel.Id,
                     SeatIndex = seatsEntityModel.Index
                 }).ToArray();
+            .Where(seatsZonesSeatsRowsSeatsJoinedTableEntity => seatsZonesSeatsRowsSeatsJoinedTableEntity.PlaceId == eventFromDb.PlaceId)
 
     private IList<BookedSeatEntityModel> GetBookedSeats(EventEntityModel eventFromDb) =>
         _applicationDbContext.BookedSeats
