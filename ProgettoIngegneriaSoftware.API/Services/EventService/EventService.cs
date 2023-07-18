@@ -3,6 +3,7 @@ using ProgettoIngegneriaSoftware.API.Models;
 using ProgettoIngegneriaSoftware.API.Models.DB;
 using ProgettoIngegneriaSoftware.API.Models.HelperModels;
 using ProgettoIngegneriaSoftware.API.Services.EventService.Exceptions;
+using ProgettoIngegneriaSoftware.Shared.Library.Models.Abstraction;
 
 namespace ProgettoIngegneriaSoftware.API.Services.EventService;
 
@@ -28,13 +29,13 @@ public class EventService : IEventsService
 
     #region  IEventService IMPLEMENTATION
 
-    public Task<IList<EventResult>> GetEvents(Guid userId) =>
+    public Task<ICollection<EventResult>> GetEvents(Guid userId) =>
         Task.Run(() =>
         {
             var eventsFromDb = _applicationDbContext.Events
                 .OrderBy(eventEntityModel => eventEntityModel.Date)
                 .ToList();
-            IList<EventResult> events = new List<EventResult>();
+            ICollection<EventResult> events = new List<EventResult>();
             foreach (var eventFromDb in eventsFromDb)
                 events.Add(CreateEventResult(eventFromDb, userId));
 
@@ -56,7 +57,7 @@ public class EventService : IEventsService
 
     private PlaceEntityModel GetPlaceEntityModel(Guid placeId) => _applicationDbContext.Places.Find(placeId)!;
 
-    private IList<SeatsZonesSeatsRowsSeatsJoinedTableEntity> GetTotalSeats(EventEntityModel eventFromDb) =>
+    private ICollection<SeatsZonesSeatsRowsSeatsJoinedTableEntity> GetTotalSeats(EventEntityModel eventFromDb) =>
         _applicationDbContext.SeatsZones
             .Join(
                 _applicationDbContext.SeatsRows,
@@ -89,19 +90,19 @@ public class EventService : IEventsService
             .ThenBy(seatsZonesSeatsRowsSeatsJoinedTableEntity => seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatIndex)
             .ToArray();
 
-    private IList<Guid> GetBookedSeatsIds(EventEntityModel eventFromDb) =>
+    private ICollection<Guid> GetBookedSeatsIds(EventEntityModel eventFromDb) =>
         _applicationDbContext.BookedSeats
             .Where(bookedSeatEntityModel => bookedSeatEntityModel.EventId == eventFromDb.Id)
             .Select(bookedSeat => bookedSeat.SeatId)
             .ToArray();
 
-    private IList<SeatResult> GetUserBookedSeats(EventEntityModel eventFromDb, Guid userId)
+    private ICollection<ISeatResult> GetUserBookedSeats(EventEntityModel eventFromDb, Guid userId)
     {
         var bookedSeatsIds = _applicationDbContext.BookedSeats.Where(bookedSeatEntityModel =>
             bookedSeatEntityModel.EventId == eventFromDb.Id && bookedSeatEntityModel.UserId == userId).Select(bookedSeatEntityModel => bookedSeatEntityModel.SeatId).ToArray();
 
         if (bookedSeatsIds.Length == 0)
-            return Array.Empty<SeatResult>();
+            return Array.Empty<ISeatResult>();
 
         var bookedSeatsFromDb = _applicationDbContext.SeatsZones
             .Join(
@@ -135,7 +136,7 @@ public class EventService : IEventsService
             .ThenBy(seatsZonesSeatsRowsSeatsJoinedTableEntity => seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatsRowName)
             .ThenBy(seatsZonesSeatsRowsSeatsJoinedTableEntity => seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatIndex);
 
-        var bookedSeats = new List<SeatResult>();
+        ICollection<ISeatResult> bookedSeats = new List<ISeatResult>();
         foreach (var seatsZonesSeatsRowsSeatsJoinedTableEntity in bookedSeatsFromDb)
         {
             bookedSeats.Add(new SeatResult()
@@ -182,7 +183,7 @@ public class EventService : IEventsService
                 })
             .Count(seatsZoneRowSeatJoinedTableEntityModel => seatsZoneRowSeatJoinedTableEntityModel.PlaceId == eventFromDb.PlaceId);
 
-    private List<SeatResult> GetAvailableSeats(EventEntityModel eventFromDb)
+    private ICollection<ISeatResult> GetAvailableSeats(EventEntityModel eventFromDb)
     {
         var totalSeats = GetTotalSeats(eventFromDb);
         var bookedSeatsIds = GetBookedSeatsIds(eventFromDb);
@@ -198,7 +199,8 @@ public class EventService : IEventsService
                 SeatId = seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatId,
                 SeatIndex = seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatIndex
             })
-            .ToList();
+            .Cast<ISeatResult>()
+            .ToArray();
     }
 
     private EventResult CreateEventResult(EventEntityModel eventEntityModel, Guid userId)

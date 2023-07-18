@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using ProgettoIngegneriaSoftware.API.Attributes.DataAnnotation;
 using ProgettoIngegneriaSoftware.API.Constants;
+using ProgettoIngegneriaSoftware.Shared.Library.Models.Abstraction;
 
 namespace ProgettoIngegneriaSoftware.API.Models;
 
-public class RegisterUserInfo
+public class RegisterUserInfo : IRegisterUserInfo
 {
 
     #region PROPERTIES

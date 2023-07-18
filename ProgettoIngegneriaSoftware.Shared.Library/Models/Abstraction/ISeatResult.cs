@@ -1,8 +1,6 @@
-﻿using ProgettoIngegneriaSoftware.Shared.Library.Models.Abstraction;
+﻿namespace ProgettoIngegneriaSoftware.Shared.Library.Models.Abstraction;
 
-namespace ProgettoIngegneriaSoftware.API.Models;
-
-public class SeatResult : ISeatResult
+public interface ISeatResult
 {
 
     #region PROPERTIES
@@ -12,7 +10,7 @@ public class SeatResult : ISeatResult
     public string SeatZoneName { get; set; }
     public Guid SeatRowId { get; set; }
     public string SeatRowName { get; set; }
-    public Guid SeatId {get; set; }
+    public Guid SeatId { get; set; }
     public int SeatIndex { get; set; }
 
     #endregion PROPERTIES

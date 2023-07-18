@@ -1,10 +1,11 @@
 ﻿using ProgettoIngegneriaSoftware.API.Constants;
 using System.ComponentModel.DataAnnotations;
 using ProgettoIngegneriaSoftware.API.Attributes.DataAnnotation;
+using ProgettoIngegneriaSoftware.Shared.Library.Models.Abstraction;
 
 namespace ProgettoIngegneriaSoftware.API.Models;
 
-public class LoginUserInfo
+public class LoginUserInfo : ILoginUserInfo
 {
     #region PROPERTIES
 

@@ -1,8 +1,6 @@
-﻿using ProgettoIngegneriaSoftware.Shared.Library.Models.Abstraction;
+﻿namespace ProgettoIngegneriaSoftware.Shared.Library.Models.Abstraction;
 
-namespace ProgettoIngegneriaSoftware.API.Models;
-
-public class EventResult : IEventResult
+public interface IEventResult
 {
 
     #region PROPERTIES
