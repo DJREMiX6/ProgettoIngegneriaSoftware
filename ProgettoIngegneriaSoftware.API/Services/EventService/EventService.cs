@@ -80,12 +80,18 @@ public class EventService : IEventsService
                     SeatsRowName = seatsZoneRowJoinedTableEntity.SeatsRowName,
                     SeatId = seatsEntityModel.Id,
                     SeatIndex = seatsEntityModel.Index
-                }).ToArray();
+                })
             .Where(seatsZonesSeatsRowsSeatsJoinedTableEntity => seatsZonesSeatsRowsSeatsJoinedTableEntity.PlaceId == eventFromDb.PlaceId)
+            .OrderBy(seatsZonesSeatsRowsSeatsJoinedTableEntity => seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatsZoneName)
+            .ThenBy(seatsZonesSeatsRowsSeatsJoinedTableEntity => seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatsRowName)
+            .ThenBy(seatsZonesSeatsRowsSeatsJoinedTableEntity => seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatIndex)
+            .ToArray();
 
-    private IList<BookedSeatEntityModel> GetBookedSeats(EventEntityModel eventFromDb) =>
+    private IList<Guid> GetBookedSeatsIds(EventEntityModel eventFromDb) =>
         _applicationDbContext.BookedSeats
-            .Where(bookedSeatEntityModel => bookedSeatEntityModel.EventId == eventFromDb.Id).ToArray();
+            .Where(bookedSeatEntityModel => bookedSeatEntityModel.EventId == eventFromDb.Id)
+            .Select(bookedSeat => bookedSeat.SeatId)
+            .ToArray();
 
     private IList<SeatResult> GetUserBookedSeats(EventEntityModel eventFromDb, Guid userId)
     {
@@ -122,7 +128,10 @@ public class EventService : IEventsService
                     SeatIndex = seatsEntityModel.Index
                 })
             .Where(seatsZonesSeatsRowsSeatsJoinedTableEntity =>
-                bookedSeatsIds.Contains(seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatId));
+                bookedSeatsIds.Contains(seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatId))
+            .OrderBy(seatsZonesSeatsRowsSeatsJoinedTableEntity => seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatsZoneName)
+            .ThenBy(seatsZonesSeatsRowsSeatsJoinedTableEntity => seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatsRowName)
+            .ThenBy(seatsZonesSeatsRowsSeatsJoinedTableEntity => seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatIndex);
 
         var bookedSeats = new List<SeatResult>();
         foreach (var seatsZonesSeatsRowsSeatsJoinedTableEntity in bookedSeatsFromDb)
@@ -174,7 +183,7 @@ public class EventService : IEventsService
     private List<SeatResult> GetAvailableSeats(EventEntityModel eventFromDb)
     {
         var totalSeats = GetTotalSeats(eventFromDb);
-        var bookedSeatsIds = GetBookedSeats(eventFromDb).Select(bookedSeat => bookedSeat.SeatId);
+        var bookedSeatsIds = GetBookedSeatsIds(eventFromDb);
         return totalSeats
             .Where(seatsZonesSeatsRowsSeatsJoinedTableEntity => !bookedSeatsIds.Contains(seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatId))
             .Select(seatsZonesSeatsRowsSeatsJoinedTableEntity => new SeatResult()
