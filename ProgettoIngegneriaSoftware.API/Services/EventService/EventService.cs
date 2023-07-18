@@ -31,7 +31,9 @@ public class EventService : IEventsService
     public Task<IList<EventResult>> GetEvents(Guid userId) =>
         Task.Run(() =>
         {
-            var eventsFromDb = _applicationDbContext.Events.ToList();
+            var eventsFromDb = _applicationDbContext.Events
+                .OrderBy(eventEntityModel => eventEntityModel.Date)
+                .ToList();
             IList<EventResult> events = new List<EventResult>();
             foreach (var eventFromDb in eventsFromDb)
                 events.Add(CreateEventResult(eventFromDb, userId));
