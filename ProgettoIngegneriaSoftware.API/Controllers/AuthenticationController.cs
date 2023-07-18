@@ -41,6 +41,9 @@ public class AuthenticationController : ControllerBase
     [HttpPost("signup", Name = "Register")]
     public async Task<IActionResult> Register([FromBody]RegisterUserInfo registerUserInfo)
     {
+        if (_authenticationService.IsUserAuthenticated(HttpContext))
+            return Unauthorized("User already logged in.");
+
         try
         {
             await _registrationService.RegisterUser(registerUserInfo);

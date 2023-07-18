@@ -44,7 +44,7 @@ public class BookingController : ControllerBase
         if (!_authenticationService.IsUserAuthenticated(HttpContext))
             return Unauthorized("User not logged in.");
 
-        EventResult? bookedEvent = null;
+        EventResult? bookedEvent;
 
         try
         {
@@ -66,7 +66,33 @@ public class BookingController : ControllerBase
         return Ok(bookedEvent);
     }
 
-    
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [HttpPatch("event/{eventId:guid}", Name = "CancelBookedSeats")]
+    public async Task<IActionResult> CancelBookedSeats([FromRoute] Guid eventId, [FromBody] Guid[] seatIds)
+    {
+        if (!_authenticationService.IsUserAuthenticated(HttpContext))
+            return Unauthorized("User not logged in.");
+
+        EventResult? bookedEvent;
+
+        try
+        {
+            bookedEvent = await _eventBookingService.CancelBookedSeats(eventId, _authenticationService.AuthenticatedUserId(HttpContext), seatIds);
+        }
+        catch (EventNotFoundException)
+        {
+            return NotFound("Event not found.");
+        }
+        catch (ArgumentException)
+        {
+            return BadRequest("One or more errors occurred, please try again later.");
+        }
+
+        return Ok(bookedEvent);
+    }
 
     #endregion API ENDPOINTS
 
