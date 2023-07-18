@@ -10,5 +10,5 @@ public class EventResult
     public string ImageSource { get; set; }
     public int TotalSeatsCount { get; set; }
     public IList<SeatResult> AvailableSeats { get; set; }
-    public SeatResult? BookedSeat { get; set; }
+    public IList<SeatResult> BookedSeats { get; set; }
 }

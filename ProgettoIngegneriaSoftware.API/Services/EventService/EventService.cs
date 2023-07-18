@@ -2,6 +2,7 @@
 using ProgettoIngegneriaSoftware.API.Models;
 using ProgettoIngegneriaSoftware.API.Models.DB;
 using ProgettoIngegneriaSoftware.API.Models.HelperModels;
+using ProgettoIngegneriaSoftware.API.Services.EventService.Exceptions;
 
 namespace ProgettoIngegneriaSoftware.API.Services.EventService;
 
@@ -38,11 +39,13 @@ public class EventService : IEventsService
             return events;
         });
 
-    public Task<EventResult?> GetEvent(Guid eventId, Guid userId) =>
+    public Task<EventResult> GetEvent(Guid eventId, Guid userId) =>
         Task.Run(() =>
         {
             var eventFromDb = _applicationDbContext.Events.Find(eventId);
-            return eventFromDb == null ? null : CreateEventResult(eventFromDb, userId);
+            return eventFromDb == null
+                ? throw new EventNotFoundException(eventId)
+                : CreateEventResult(eventFromDb, userId);
         });
 
     #endregion IEventService IMPLEMENTATION
@@ -83,15 +86,15 @@ public class EventService : IEventsService
         _applicationDbContext.BookedSeats
             .Where(bookedSeatEntityModel => bookedSeatEntityModel.EventId == eventFromDb.Id).ToArray();
 
-    private SeatResult? GetUserBookedSeat(EventEntityModel eventFromDb, Guid userId)
+    private IList<SeatResult> GetUserBookedSeats(EventEntityModel eventFromDb, Guid userId)
     {
-        var bookedSeatId = _applicationDbContext.BookedSeats.FirstOrDefault(bookedSeatEntityModel =>
-            bookedSeatEntityModel.EventId == eventFromDb.Id && bookedSeatEntityModel.UserId == userId)?.SeatId;
+        var bookedSeatsIds = _applicationDbContext.BookedSeats.Where(bookedSeatEntityModel =>
+            bookedSeatEntityModel.EventId == eventFromDb.Id && bookedSeatEntityModel.UserId == userId).Select(bookedSeatEntityModel => bookedSeatEntityModel.SeatId).ToArray();
 
-        if (bookedSeatId == null)
-            return null;
+        if (bookedSeatsIds.Length == 0)
+            return Array.Empty<SeatResult>();
 
-        var bookedSeat = _applicationDbContext.SeatsZones
+        var bookedSeatsFromDb = _applicationDbContext.SeatsZones
             .Join(
                 _applicationDbContext.SeatsRows,
                 seatsZoneEntityModel => seatsZoneEntityModel.Id,
@@ -100,7 +103,9 @@ public class EventService : IEventsService
                 {
                     PlaceId = seatsZoneEntityModel.PlaceId,
                     SeatsZoneId = seatsZoneEntityModel.Id,
-                    SeatsRowId = seatsRowEntityModel.Id
+                    SeatsZoneName = seatsZoneEntityModel.Name,
+                    SeatsRowId = seatsRowEntityModel.Id,
+                    SeatsRowName = seatsRowEntityModel.Name
                 })
             .Join(_applicationDbContext.Seats,
                 seatsZoneRowJoinedTableEntityModel => seatsZoneRowJoinedTableEntityModel.SeatsRowId,
@@ -109,21 +114,31 @@ public class EventService : IEventsService
                 {
                     PlaceId = seatsZoneRowJoinedTableEntity.PlaceId,
                     SeatsZoneId = seatsZoneRowJoinedTableEntity.SeatsZoneId,
+                    SeatsZoneName = seatsZoneRowJoinedTableEntity.SeatsZoneName,
                     SeatsRowId = seatsZoneRowJoinedTableEntity.SeatsRowId,
-                    SeatId = seatsEntityModel.Id
+                    SeatsRowName = seatsZoneRowJoinedTableEntity.SeatsRowName,
+                    SeatId = seatsEntityModel.Id,
+                    SeatIndex = seatsEntityModel.Index
                 })
-            .Single(seatsZonesSeatsRowsSeatsJoinedTableEntity => seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatId == bookedSeatId);
+            .Where(seatsZonesSeatsRowsSeatsJoinedTableEntity =>
+                bookedSeatsIds.Contains(seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatId));
 
-        return new SeatResult()
+        var bookedSeats = new List<SeatResult>();
+        foreach (var seatsZonesSeatsRowsSeatsJoinedTableEntity in bookedSeatsFromDb)
         {
-            PlaceId = bookedSeat.PlaceId,
-            SeatZoneId = bookedSeat.SeatsZoneId,
-            SeatZoneName = bookedSeat.SeatsZoneName,
-            SeatRowId = bookedSeat.SeatsRowId,
-            SeatRowName = bookedSeat.SeatsRowName,
-            SeatId = bookedSeat.SeatId,
-            SeatIndex = bookedSeat.SeatIndex
-        };
+            bookedSeats.Add(new SeatResult()
+            {
+                PlaceId = seatsZonesSeatsRowsSeatsJoinedTableEntity.PlaceId,
+                SeatZoneId = seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatsZoneId,
+                SeatZoneName = seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatsZoneName,
+                SeatRowId = seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatsRowId,
+                SeatRowName = seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatsRowName,
+                SeatId = seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatId,
+                SeatIndex = seatsZonesSeatsRowsSeatsJoinedTableEntity.SeatIndex
+            });
+        }
+
+        return bookedSeats;
     }
 
     private int GetTotalSeatsCount(EventEntityModel eventFromDb) =>
@@ -179,7 +194,8 @@ public class EventService : IEventsService
         var placeName = GetPlaceEntityModel(eventEntityModel.PlaceId).Name;
         var totalSeatsCount = GetTotalSeatsCount(eventEntityModel);
         var availableSeats = GetAvailableSeats(eventEntityModel);
-        var bookedSeat = GetUserBookedSeat(eventEntityModel, userId);
+        var userBookedSeats = GetUserBookedSeats(eventEntityModel, userId);
+
         return new EventResult()
         {
             Id = eventEntityModel.Id,
@@ -190,7 +206,7 @@ public class EventService : IEventsService
             ImageSource = eventEntityModel.ImageSrc,
             TotalSeatsCount = totalSeatsCount,
             AvailableSeats = availableSeats,
-            BookedSeat = bookedSeat
+            BookedSeats = userBookedSeats
         };
     }
 

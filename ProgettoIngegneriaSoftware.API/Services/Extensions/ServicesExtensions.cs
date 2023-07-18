@@ -1,4 +1,5 @@
 ﻿using ProgettoIngegneriaSoftware.API.Services.AuthenticationService;
+using ProgettoIngegneriaSoftware.API.Services.EventBookingService;
 using ProgettoIngegneriaSoftware.API.Services.EventService;
 using ProgettoIngegneriaSoftware.API.Services.RegistrationService;
 using ProgettoIngegneriaSoftware.API.Services.UserEntityModelService;
@@ -16,11 +17,15 @@ public static class ServicesExtensions
     public static IServiceCollection AddModelsServices(this IServiceCollection services) =>
         services
             .AddUserEntityModelService()
-            .AddEventsService();
+            .AddEventsService()
+            .AddEventBookingService();
 
     private static IServiceCollection AddUserEntityModelService(this IServiceCollection services) =>
         services.AddScoped<IUserEntityModelService, EntityFrameworkUserEntityModelService>();
 
     public static IServiceCollection AddEventsService(this IServiceCollection services) =>
         services.AddScoped<IEventsService, EventService.EventService>();
+
+    public static IServiceCollection AddEventBookingService(this IServiceCollection services) =>
+        services.AddScoped<IEventBookingService, EventBookingService.EventBookingService>();
 }

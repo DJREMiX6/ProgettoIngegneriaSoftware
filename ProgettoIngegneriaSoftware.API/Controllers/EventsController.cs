@@ -48,7 +48,7 @@ public class EventsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpGet("", Name = "GetEvent")]
+    [HttpGet("event", Name = "GetEvent")]
     public async Task<IActionResult> GetEvent([FromQuery] Guid eventId)
     {
         if (!_authenticationService.IsUserAuthenticated(HttpContext))
