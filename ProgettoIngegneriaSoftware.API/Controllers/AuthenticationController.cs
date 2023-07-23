@@ -50,19 +50,39 @@ public class AuthenticationController : ControllerBase
         }
         catch (UsernameAlreadyInUseException usernameAlreadyInUseException)
         {
-            return BadRequest(usernameAlreadyInUseException.Message);
+            return BadRequest(new ProblemDetails()
+            {
+                Title = "Authentication error.",
+                Detail = usernameAlreadyInUseException.Message,
+                Status = StatusCodes.Status400BadRequest
+            });
         }
         catch (EmailAlreadyInUseException emailAlreadyInUseException)
         {
-            return BadRequest(emailAlreadyInUseException.Message);
+            return BadRequest(new ProblemDetails()
+            {
+                Title = "Authentication error.",
+                Detail = emailAlreadyInUseException.Message,
+                Status = StatusCodes.Status400BadRequest
+            });
         }
         catch (InvalidPasswordException invalidPasswordException)
         {
-            return BadRequest(invalidPasswordException.Message);
+            return BadRequest(new ProblemDetails()
+            {
+                Title = "Authentication error.",
+                Detail = invalidPasswordException.Message,
+                Status = StatusCodes.Status400BadRequest
+            });
         }
         catch (Exception ex)
         {
-            return BadRequest("Operation failed.");
+            return BadRequest(new ProblemDetails()
+            {
+                Title = "Unexpected error.",
+                Detail = ex.Message,
+                Status = StatusCodes.Status400BadRequest
+            });
         }
 
         return Ok("User registered correctly.");
@@ -83,11 +103,21 @@ public class AuthenticationController : ControllerBase
         }
         catch (AuthenticationException aex)
         {
-            return BadRequest(aex.Message);
+            return BadRequest(new ProblemDetails()
+            {
+                Title = "Authentication error.",
+                Detail = aex.Message,
+                Status = StatusCodes.Status400BadRequest
+            });
         }
         catch (Exception ex)
         {
-            return BadRequest("Unexpected error: " + ex.Message);
+            return BadRequest(new ProblemDetails()
+            {
+                Title = "Unexpected error.",
+                Detail = ex.Message,
+                Status = StatusCodes.Status400BadRequest
+            });
         }
 
         return Ok("User authenticated.");
@@ -108,7 +138,12 @@ public class AuthenticationController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest("Unexpected error:" + ex.Message);
+            return BadRequest(new ProblemDetails()
+            {
+                Title = "Unexpected error.",
+                Detail = ex.Message,
+                Status = StatusCodes.Status400BadRequest
+            });
         }
 
         return Ok("User signed out.");

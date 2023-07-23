@@ -48,8 +48,8 @@ public class EventsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpGet("event", Name = "GetEvent")]
-    public async Task<IActionResult> GetEvent([FromQuery] Guid eventId)
+    [HttpGet("{eventId}", Name = "GetEvent")]
+    public async Task<IActionResult> GetEvent([FromRoute] Guid eventId)
     {
         if (!_authenticationService.IsUserAuthenticated(HttpContext))
             return Unauthorized("User not logged in.");
