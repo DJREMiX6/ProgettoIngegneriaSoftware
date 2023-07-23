@@ -11,7 +11,10 @@ internal static class MauiAppBuilderExtensions
     {
         builder.Services
             .AddEventsService()
-            .AddQrCodeAnalyzerService();
+            .AddQrCodeAnalyzerService()
+            .AddAuthenticationService()
+            .AddUriService()
+            .AddProgettoIngegneriaSoftwareApiHttpClientFactory();
 
         return builder;
     }
@@ -20,6 +23,9 @@ internal static class MauiAppBuilderExtensions
     {
         builder.Services
             .AddSingleton<AppShellViewModel>()
+
+            .AddSingleton<LoginPage>()
+            .AddSingleton<LoginViewModel>()
 
             .AddSingleton<EventsPage>()
             .AddSingleton<EventsViewModel>()

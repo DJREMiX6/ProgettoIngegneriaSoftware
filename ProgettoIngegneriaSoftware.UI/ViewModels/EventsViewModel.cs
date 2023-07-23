@@ -3,6 +3,8 @@ using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ProgettoIngegneriaSoftware.UI.Models;
+using ProgettoIngegneriaSoftware.UI.Models.Abstraction;
+using ProgettoIngegneriaSoftware.UI.Services.AuthenticationService;
 using ProgettoIngegneriaSoftware.UI.Services.EventsService;
 using ProgettoIngegneriaSoftware.UI.Views;
 
@@ -16,10 +18,11 @@ public partial class EventsViewModel : BaseViewModel
 
     #region FIELDS
 
+    private readonly IAuthenticationService _authenticationService;
     private readonly IEventsService _eventsService;
 
     [ObservableProperty]
-    private List<ReadableEventModel> _events;
+    private List<IDisplayEvent> _events;
 
     [ObservableProperty]
     private bool _openEventDetail;
@@ -34,9 +37,10 @@ public partial class EventsViewModel : BaseViewModel
 
     #region CTORS
 
-    public EventsViewModel(IEventsService eventsService)
+    public EventsViewModel(IEventsService eventsService, IAuthenticationService authenticationService)
     {
         _eventsService = eventsService;
+        _authenticationService = authenticationService;
         Title = "Events";
     }
 
@@ -71,7 +75,7 @@ public partial class EventsViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async Task ClickedOnEventAsync(ReadableEventModel eventModel)
+    private async Task ClickedOnEventAsync(IDisplayEvent eventModel)
     {
         if(IsBusy) return;
 
@@ -85,7 +89,7 @@ public partial class EventsViewModel : BaseViewModel
                 await UnFollowAsync(eventModel);
                 madeChanges = true;
             }
-            else if (!eventModel.IsBookedByCurrentUser && eventModel.IsBookable)
+            else if (!eventModel.IsBookedByCurrentUser && !eventModel.IsFull)
             {
                 await FollowAsync(eventModel);
                 madeChanges = true;
@@ -105,7 +109,7 @@ public partial class EventsViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async Task OpenQrCodeDetailViewAsync(ReadableEventModel readableEventModel)
+    private async Task OpenQrCodeDetailViewAsync(IDisplayEvent readableEventModel)
     {
         await Shell.Current.GoToAsync(nameof(QrCodeDetailView), true, new Dictionary<string, object>()
         {
@@ -114,7 +118,7 @@ public partial class EventsViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async Task OpenEventDetailViewAsync(ReadableEventModel readableEventModel)
+    private async Task OpenEventDetailViewAsync(IDisplayEvent readableEventModel)
     {
         await Shell.Current.GoToAsync(nameof(EventDetailView), true, new Dictionary<string, object>()
         {
@@ -142,19 +146,19 @@ public partial class EventsViewModel : BaseViewModel
         await GetEventsAsync();
     }
 
-    private async Task UnFollowAsync(ReadableEventModel eventModel)
+    private async Task UnFollowAsync(IDisplayEvent eventModel)
     {
         await _eventsService.UnFollowEventAsync(eventModel.Id);
     }
 
-    private async Task FollowAsync(ReadableEventModel eventModel)
+    private async Task FollowAsync(IDisplayEvent eventModel)
     {
         await _eventsService.FollowEventAsync(eventModel.Id);
     }
 
     private async Task GetEventsFromServiceAsync()
     {
-        Events = new List<ReadableEventModel>();
+        Events = new List<IDisplayEvent>();
         var events = await _eventsService.GetEventsAsync();
         Events.AddRange(events);
     }

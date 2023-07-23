@@ -28,8 +28,8 @@
         </Grid>
     </Shell.TitleView>
     <ShellContent
-            ContentTemplate="{DataTemplate views:EventsPage}"
-            Route="EventsPage">
+            ContentTemplate="{DataTemplate views:LoginPage}"
+            Route="LoginPage">
     </ShellContent>
 
 </Shell>

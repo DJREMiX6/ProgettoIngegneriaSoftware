@@ -1,11 +1,12 @@
 ﻿using ProgettoIngegneriaSoftware.UI.Models;
+using ProgettoIngegneriaSoftware.UI.Models.Abstraction;
 
 namespace ProgettoIngegneriaSoftware.UI.Services.EventsService;
 
 public interface IEventsService
 {
-    public Task<List<ReadableEventModel>> GetEventsAsync();
-    public Task<ReadableEventModel?> GetEventAsync(int id);
-    public Task<bool> FollowEventAsync(int eventId);
-    public Task<bool> UnFollowEventAsync(int eventId);
+    public Task<IList<IDisplayEvent>> GetEventsAsync();
+    public Task<IDisplayEvent?> GetEventAsync(Guid eventId);
+    public Task<bool> FollowEventAsync(Guid eventId);
+    public Task<bool> UnFollowEventAsync(Guid eventId);
 }

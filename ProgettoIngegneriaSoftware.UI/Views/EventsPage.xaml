@@ -13,7 +13,7 @@
                      CommandParameter="{Binding Source={x:Reference EventsRefreshView}, Path=.}">
             <CollectionView ItemsSource="{Binding Events}">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="eventmodel:ReadableEventModel">
+                    <DataTemplate x:DataType="eventmodel:EventResult">
                         <Grid Padding="10">
                             <Frame HeightRequest="250"
                                Padding="0"
@@ -240,7 +240,7 @@
                                        VerticalOptions="Start"
                                        Margin="0,2,0,0"/>
 
-                                    <Label Text="{Binding DisplaySeats}"
+                                    <Label Text="{Binding FormattedSeats}"
                                        TextColor="{StaticResource Gray500}"
                                        HorizontalTextAlignment="Center"
                                        VerticalTextAlignment="Center"

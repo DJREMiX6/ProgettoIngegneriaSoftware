@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodel="clr-namespace:ProgettoIngegneriaSoftware.UI.ViewModels"
+             xmlns:components="clr-namespace:ProgettoIngegneriaSoftware.UI.Components"
+             x:DataType="viewmodel:LoginViewModel"
+             x:Class="ProgettoIngegneriaSoftware.UI.Views.LoginPage">
+    <ContentPage.Content>
+        <VerticalStackLayout>
+            <Grid RowDefinitions="*,*,*"
+                  ColumnDefinitions="*">
+                
+                <components:FullLogo 
+                    Grid.Column="0"
+                    Grid.Row="0"/>
+                
+                <Frame
+                    Grid.Column="0"
+                    Grid.Row="0">
+                    <VerticalStackLayout>
+                        <Entry x:Name="EmailTxt"
+                               ClearButtonVisibility="Never"
+                               IsPassword="False"
+                               IsTextPredictionEnabled="True"
+                               Placeholder="Email"
+                               Text="{Binding Email}"
+                               ReturnCommand="{Binding LoginCommand}"/>
+                        <Entry x:Name="PasswordTxt"
+                               ClearButtonVisibility="Never"
+                               IsPassword="True"
+                               IsTextPredictionEnabled="False"
+                               Placeholder="Password"
+                               Text="{Binding Password}"
+                               ReturnCommand="{Binding LoginCommand}"/>
+                        <Button x:Name="LoginBtn" 
+                                Text="Sign In"
+                                BackgroundColor="{StaticResource Tertiary}"
+                                Command="{Binding LoginCommand}"/>
+                    </VerticalStackLayout>
+                </Frame>
+
+            </Grid>
+        </VerticalStackLayout>
+    </ContentPage.Content>
+</ContentPage>

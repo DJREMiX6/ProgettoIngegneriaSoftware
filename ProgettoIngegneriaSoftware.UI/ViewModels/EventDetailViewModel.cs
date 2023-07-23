@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ProgettoIngegneriaSoftware.UI.Models;
+using ProgettoIngegneriaSoftware.UI.Models.Abstraction;
 using ProgettoIngegneriaSoftware.UI.Services.EventsService;
 
 namespace ProgettoIngegneriaSoftware.UI.ViewModels;
@@ -12,16 +13,16 @@ public partial class EventDetailViewModel : BaseViewModel
 {
 
     [ObservableProperty]
-    private List<ReadableEventModel> _eventWrapper;
+    private List<IDisplayEvent> _eventWrapper;
 
     [ObservableProperty]
-    private ReadableEventModel? _eventModelToDetail;
+    private IDisplayEvent? _eventModelToDetail;
 
     [ObservableProperty]
     private bool _toFollow;
 
     [ObservableProperty]
-    private int _eventId;
+    private Guid _eventId;
 
     private readonly IEventsService _eventsService;
 
@@ -46,7 +47,7 @@ public partial class EventDetailViewModel : BaseViewModel
                 await UnFollowAsync(EventModelToDetail);
                 madeChanges = true;
             }
-            else if (!EventModelToDetail.IsBookedByCurrentUser && EventModelToDetail.IsBookable)
+            else if (!EventModelToDetail.IsBookedByCurrentUser && !EventModelToDetail.IsFull)
             {
                 await FollowAsync(EventModelToDetail);
                 madeChanges = true;
@@ -76,8 +77,8 @@ public partial class EventDetailViewModel : BaseViewModel
         }
         else
         {
-            EventWrapper = new List<ReadableEventModel>();
-            EventModelToDetail = new ReadableEventModel();
+            EventWrapper = new List<IDisplayEvent>();
+            EventModelToDetail = new EventResult();
             EventModelToDetail = eventModel;
             EventId = eventModel.Id;
             EventWrapper.Add(EventModelToDetail);
@@ -87,14 +88,14 @@ public partial class EventDetailViewModel : BaseViewModel
     [RelayCommand]
     private void OnNavigatedTo()
     {
-        if (EventId > 0)
+        if (EventId != Guid.Empty)
             GetEventFromServiceAsync().Wait();
         else
         {
             EventId = EventModelToDetail!.Id;
         }
 
-        EventWrapper = new List<ReadableEventModel> { EventModelToDetail! };
+        EventWrapper = new List<IDisplayEvent> { EventModelToDetail! };
 
         if (ToFollow)
         {
@@ -110,12 +111,12 @@ public partial class EventDetailViewModel : BaseViewModel
         }
     }
 
-    private async Task UnFollowAsync(ReadableEventModel eventModel)
+    private async Task UnFollowAsync(IDisplayEvent eventModel)
     {
         await _eventsService.UnFollowEventAsync(eventModel.Id);
     }
 
-    private async Task FollowAsync(ReadableEventModel eventModel)
+    private async Task FollowAsync(IDisplayEvent eventModel)
     {
         await _eventsService.FollowEventAsync(eventModel.Id);
     }

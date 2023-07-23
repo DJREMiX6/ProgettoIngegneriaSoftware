@@ -201,7 +201,7 @@
                                VerticalOptions="Start"
                                Margin="0,2,0,0"/>
 
-                        <Label Text="{Binding EventModelToDetail.DisplaySeats}"
+                        <Label Text="{Binding EventModelToDetail.FormattedSeats}"
                                TextColor="{StaticResource Gray500}"
                                HorizontalTextAlignment="Center"
                                VerticalTextAlignment="Center"
