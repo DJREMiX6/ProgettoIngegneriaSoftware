@@ -1,15 +1,14 @@
-﻿using System.Text.Json;
-using Newtonsoft.Json;
+﻿using System.Net;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace ProgettoIngegneriaSoftware.UI.Services.CookiesService;
 
-public class CookiesService : ICookiesService
+public class CookiesService : CookieContainer
 {
 
     #region FIELDS
-
-    private Dictionary<string, string>? _cookiesDictionary;
-    private const string COOKIES_FILE_NAME = "biscuits.js";
+    
+    private const string COOKIES_FILE_NAME = "biscuits.json";
 
     private string? _cookiesFilePath;
 
@@ -20,45 +19,42 @@ public class CookiesService : ICookiesService
     public CookiesService()
     {
         _cookiesFilePath = Path.Combine(FileSystem.CacheDirectory, COOKIES_FILE_NAME);
+        LoadCookies();
     }
 
     #endregion CTORS
 
-    #region PROPS
-
-    private Dictionary<string, string> CookiesDictionary => _cookiesDictionary ??= new Dictionary<string, string>();
-
-    public IReadOnlyDictionary<string, string> Cookies => CookiesDictionary;
-
-    #endregion PROPS
-
     #region METHODS
 
-    public ICookiesService SetCookie(string key, string value)
-    {
-        if (string.IsNullOrWhiteSpace(key))
-            throw new ArgumentException(key);
-        if(string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException(value);
-
-        CookiesDictionary.Add(key, value);
-
-        return this;
-    }
-
-    private async Task LoadCookies()
+    public void LoadCookies()
     {
         if (!File.Exists(_cookiesFilePath))
         {
-            File.Create(_cookiesFilePath);
-            _cookiesDictionary = new Dictionary<string, string>();
-            await File.WriteAllTextAsync(_cookiesFilePath, JsonConvert.SerializeObject(_cookiesDictionary));
+            return;
         }
+
+        var cookieFileContent = File.ReadAllText(_cookiesFilePath);
+        if (string.IsNullOrWhiteSpace(cookieFileContent))
+            return;
+        var deserializedCookies = JsonSerializer.Deserialize<CookieCollection>(cookieFileContent);
+
+        if (deserializedCookies != null)
+            foreach(var cookie in deserializedCookies.ToArray())
+            {
+                var cookieCopy = new Cookie(cookie.Name, cookie.Value, cookie.Path, cookie.Domain);
+                cookieCopy.HttpOnly = true;
+                Add(cookieCopy);
+            }
     }
 
-    private async Task SaveCookies()
+    public void SaveCookies()
     {
+        var cookies = GetAllCookies();
 
+        if (cookies.Count <= 0) return;
+
+        var serializedCookies = JsonSerializer.Serialize(cookies);
+        File.WriteAllText(_cookiesFilePath, serializedCookies);
     }
 
     #endregion METHODS

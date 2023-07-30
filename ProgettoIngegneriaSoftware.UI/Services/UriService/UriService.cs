@@ -5,8 +5,9 @@ public class UriService : IUriService
 
     #region CONSTS
 
+    //TODO MOVE TO APPSETTINGS.JS
     private const string SCHEME = "http";
-    private const string HOSTNAME = "localhost";
+    private const string HOSTNAME = "10.0.2.2";
     private const string PORT = "5017";
     private const string API_PATH = "api";
     private const string BASE_AUTHENTICATION_PATH = "Authentication";
