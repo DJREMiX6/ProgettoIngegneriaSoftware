@@ -5,7 +5,7 @@ using Microsoft.Maui.Platform;
 
 namespace ProgettoIngegneriaSoftware.UI
 {
-    [Application]
+    [Application(UsesCleartextTraffic = true)]
     public class MainApplication : MauiApplication
     {
         public MainApplication(IntPtr handle, JniHandleOwnership ownership)
