@@ -15,6 +15,7 @@ namespace ProgettoIngegneriaSoftware.UI
             Routing.RegisterRoute(nameof(QrCodeDetailView), typeof(QrCodeDetailView));
             Routing.RegisterRoute(nameof(EventDetailView), typeof(EventDetailView));
             Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
+            Routing.RegisterRoute(nameof(RegisterPage), typeof(RegisterPage));
         }
     }
 }
