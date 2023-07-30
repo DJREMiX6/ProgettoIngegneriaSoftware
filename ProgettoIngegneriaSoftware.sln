@@ -9,6 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgettoIngegneriaSoftware.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgettoIngegneriaSoftware.API", "ProgettoIngegneriaSoftware.API\ProgettoIngegneriaSoftware.API.csproj", "{3CE0C7C6-44B0-4FB0-9B3E-8DAA9360DAAE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3A2F43E2-C920-4B97-94B6-8CCC1C5460EF}"
+	ProjectSection(SolutionItems) = preProject
+		start-server.bat = start-server.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
