@@ -3,7 +3,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodel="clr-namespace:ProgettoIngegneriaSoftware.UI.ViewModels"
-             xmlns:eventmodel="clr-namespace:ProgettoIngegneriaSoftware.UI.Models"
+             xmlns:models="clr-namespace:ProgettoIngegneriaSoftware.UI.Models"
              x:DataType="viewmodel:EventsViewModel"
              x:Class="ProgettoIngegneriaSoftware.UI.Views.EventsPage"
              Title="{Binding Title}">
@@ -13,7 +13,7 @@
                      CommandParameter="{Binding Source={x:Reference EventsRefreshView}, Path=.}">
             <CollectionView ItemsSource="{Binding Events}">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="eventmodel:EventResult">
+                    <DataTemplate x:DataType="models:EventResult">
                         <Grid Padding="10">
                             <Frame HeightRequest="250"
                                Padding="0"

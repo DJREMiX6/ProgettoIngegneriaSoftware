@@ -1,10 +1,6 @@
-﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ProgettoIngegneriaSoftware.UI.Models;
 using ProgettoIngegneriaSoftware.UI.Models.Abstraction;
-using ProgettoIngegneriaSoftware.UI.Services.AuthenticationService;
 using ProgettoIngegneriaSoftware.UI.Services.EventsService;
 using ProgettoIngegneriaSoftware.UI.Views;
 
@@ -17,8 +13,7 @@ public partial class EventsViewModel : BaseViewModel
 {
 
     #region FIELDS
-
-    private readonly IAuthenticationService _authenticationService;
+    
     private readonly IEventsService _eventsService;
 
     [ObservableProperty]
@@ -37,10 +32,9 @@ public partial class EventsViewModel : BaseViewModel
 
     #region CTORS
 
-    public EventsViewModel(IEventsService eventsService, IAuthenticationService authenticationService)
+    public EventsViewModel(IEventsService eventsService)
     {
         _eventsService = eventsService;
-        _authenticationService = authenticationService;
         Title = "Events";
     }
 

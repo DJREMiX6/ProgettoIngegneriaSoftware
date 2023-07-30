@@ -1,7 +1,6 @@
-﻿using ProgettoIngegneriaSoftware.UI.Services.AuthenticationService;
-using ProgettoIngegneriaSoftware.UI.Services.CookiesService;
+﻿using System.Net;
+using ProgettoIngegneriaSoftware.UI.Services.ApiHttpClient;
 using ProgettoIngegneriaSoftware.UI.Services.EventsService;
-using ProgettoIngegneriaSoftware.UI.Services.HttpClientFactory;
 using ProgettoIngegneriaSoftware.UI.Services.QrCodeAnalyzerService;
 using ProgettoIngegneriaSoftware.UI.Services.UriService;
 
@@ -16,16 +15,22 @@ internal static class ServicesExtension
     internal static IServiceCollection AddQrCodeAnalyzerService(this IServiceCollection services) =>
         services.AddTransient<IQrCodeAnalyzerService, QrCodeLocalAnalyzerService>();
 
-    internal static IServiceCollection AddAuthenticationService(this IServiceCollection services) =>
-        services.AddSingleton<IAuthenticationService, AuthenticationService.AuthenticationService>();
-
     internal static IServiceCollection AddUriService(this IServiceCollection services) =>
         services.AddTransient<IUriService, UriService.UriService>();
 
-    internal static IServiceCollection AddProgettoIngegneriaSoftwareApiHttpClientFactory(this IServiceCollection services) => 
-        services.AddSingleton<ProgettoIngegneriaSoftwareApiHttpClientFactory>();
+    private static IServiceCollection AddApiHttpClient(this IServiceCollection services) => 
+        services.AddSingleton<ApiHttpClient.ApiHttpClient>();
 
-    internal static IServiceCollection AddCookiesService(this IServiceCollection services) =>
-        services.AddSingleton<ICookiesService, CookiesService.CookiesService>();
+    private static IServiceCollection AddCookiesService(this IServiceCollection services) =>
+        services.AddSingleton<CookiesService.CookiesService>();
+
+    private static IServiceCollection AddApiHttpClientHandler(this IServiceCollection services) => 
+        services.AddSingleton<HttpClientHandler, ApiHttpClientHandler>();
+
+    internal static IServiceCollection AddHttpClient(this IServiceCollection services) =>
+        services
+            .AddApiHttpClient()
+            .AddApiHttpClientHandler()
+            .AddCookiesService();
 
 }
