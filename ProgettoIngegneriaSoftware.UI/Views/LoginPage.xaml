@@ -5,42 +5,83 @@
              xmlns:viewmodel="clr-namespace:ProgettoIngegneriaSoftware.UI.ViewModels"
              xmlns:components="clr-namespace:ProgettoIngegneriaSoftware.UI.Components"
              x:DataType="viewmodel:LoginViewModel"
-             x:Class="ProgettoIngegneriaSoftware.UI.Views.LoginPage">
+             x:Class="ProgettoIngegneriaSoftware.UI.Views.LoginPage"
+             Title="{Binding Title}">
     <ContentPage.Content>
-        <VerticalStackLayout>
-            <Grid RowDefinitions="*,*,*"
-                  ColumnDefinitions="*">
-                
-                <components:FullLogo 
-                    Grid.Column="0"
-                    Grid.Row="0"/>
-                
-                <Frame
-                    Grid.Column="0"
-                    Grid.Row="0">
-                    <VerticalStackLayout>
+        <VerticalStackLayout VerticalOptions="Fill">
+
+            <ActivityIndicator Color="{StaticResource White}"
+                               IsRunning="{Binding IsBusy}"/>
+
+            <Frame BackgroundColor="Transparent"
+                   BorderColor="Transparent">
+
+                <VerticalStackLayout>
+
+                    <components:FullLogo Margin="0,0,0,12"/>
+
+                    <Frame BackgroundColor="{StaticResource Secondary}"
+                           BorderColor="Transparent"
+                           Padding="8,6"
+                           Margin="6,4">
                         <Entry x:Name="EmailTxt"
                                ClearButtonVisibility="Never"
                                IsPassword="False"
                                IsTextPredictionEnabled="True"
                                Placeholder="Email"
                                Text="{Binding Email}"
-                               ReturnCommand="{Binding LoginCommand}"/>
+                               BackgroundColor="{StaticResource Secondary}"
+                               PlaceholderColor="{StaticResource Gray100}"
+                               ReturnCommand="{Binding LoginCommand}"
+                               IsEnabled="{Binding IsNotBusy}"/>
+                    </Frame>
+
+                    <Frame BackgroundColor="{StaticResource Secondary}"
+                           BorderColor="Transparent"
+                           Padding="8,6"
+                           Margin="6,4">
                         <Entry x:Name="PasswordTxt"
                                ClearButtonVisibility="Never"
                                IsPassword="True"
                                IsTextPredictionEnabled="False"
                                Placeholder="Password"
                                Text="{Binding Password}"
-                               ReturnCommand="{Binding LoginCommand}"/>
+                               PlaceholderColor="{StaticResource Gray100}"
+                               ReturnCommand="{Binding LoginCommand}"
+                               IsEnabled="{Binding IsNotBusy}"/>
+                    </Frame>
+
+                    <Frame BackgroundColor="Transparent"
+                           BorderColor="Transparent"
+                           Padding="0"
+                           Margin="6,4">
                         <Button x:Name="LoginBtn" 
                                 Text="Sign In"
+                                FontSize="24"
+                                FontAttributes="Bold"
                                 BackgroundColor="{StaticResource Tertiary}"
-                                Command="{Binding LoginCommand}"/>
-                    </VerticalStackLayout>
-                </Frame>
+                                Command="{Binding LoginCommand}"
+                                IsEnabled="{Binding IsNotBusy}"/>
+                    </Frame>
 
-            </Grid>
+                    <Label Text="Or"
+                           FontSize="16"
+                           HorizontalTextAlignment="Center"
+                           TextColor="{StaticResource White}"/>
+
+                    <Label Text="Sign Up"
+                           FontSize="24"
+                           HorizontalTextAlignment="Center"
+                           TextColor="{StaticResource White}"
+                           FontAttributes="Bold"
+                           IsEnabled="{Binding IsNotBusy}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding NavigateToRegisterPageCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+
+                </VerticalStackLayout>
+            </Frame>
         </VerticalStackLayout>
     </ContentPage.Content>
 </ContentPage>

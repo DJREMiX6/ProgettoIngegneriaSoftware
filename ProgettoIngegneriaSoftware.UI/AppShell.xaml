@@ -27,9 +27,5 @@
                     Command="{Binding OpenQrCodeScanPageCommand}"/>
         </Grid>
     </Shell.TitleView>
-    <ShellContent
-            ContentTemplate="{DataTemplate views:LoginPage}"
-            Route="LoginPage">
-    </ShellContent>
-
+    <ShellContent ContentTemplate="{DataTemplate views:LoginPage}"/>
 </Shell>
