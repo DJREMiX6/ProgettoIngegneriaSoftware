@@ -42,7 +42,12 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> Register([FromBody]RegisterUserInfo registerUserInfo)
     {
         if (_authenticationService.IsUserAuthenticated(HttpContext))
-            return Unauthorized("User already logged in.");
+            return Unauthorized(new ProblemDetails()
+            {
+                Title = "Authentication error.",
+                Detail = "User authenticated. Log out first.",
+                Status = StatusCodes.Status400BadRequest
+            });
 
         try
         {
@@ -95,7 +100,12 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> SignIn([FromBody]LoginUserInfo loginUserInfo)
     {
         if (_authenticationService.IsUserAuthenticated(HttpContext))
-            return Unauthorized("User already logged in.");
+            return Unauthorized(new ProblemDetails()
+            {
+                Title = "Authentication error.",
+                Detail = "User already logged in.",
+                Status = StatusCodes.Status400BadRequest
+            });
 
         try
         {
@@ -129,8 +139,13 @@ public class AuthenticationController : ControllerBase
     [HttpPost("signout", Name = "SignOut")]
     public new async Task<IActionResult> SignOut()
     {
-        if (!_authenticationService.IsUserAuthenticated(HttpContext))
-            return Unauthorized("No user logged in.");
+        if (_authenticationService.IsUserAuthenticated(HttpContext))
+            return Unauthorized(new ProblemDetails()
+            {
+                Title = "Authentication error.",
+                Detail = "User not logged in.",
+                Status = StatusCodes.Status400BadRequest
+            });
 
         try
         {
