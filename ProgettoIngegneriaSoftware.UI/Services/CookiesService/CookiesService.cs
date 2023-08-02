@@ -38,13 +38,26 @@ public class CookiesService : CookieContainer
             return;
         var deserializedCookies = JsonSerializer.Deserialize<CookieCollection>(cookieFileContent);
 
-        if (deserializedCookies != null)
-            foreach(var cookie in deserializedCookies.ToArray())
+        if (deserializedCookies == null) return;
+
+        foreach(var cookie in deserializedCookies.ToArray())
+        {
+            var cookieCopy = new Cookie(cookie.Name, cookie.Value, cookie.Path, cookie.Domain)
             {
-                var cookieCopy = new Cookie(cookie.Name, cookie.Value, cookie.Path, cookie.Domain);
-                cookieCopy.HttpOnly = true;
-                Add(cookieCopy);
-            }
+                HttpOnly = cookie.HttpOnly,
+                Comment = cookie.Comment,
+                CommentUri = cookie.CommentUri,
+                Discard = cookie.Discard,
+                Expired = cookie.Expired,
+                Expires = cookie.Expires,
+                Secure = cookie.Secure,
+                Version = cookie.Version,
+                /* If set, this property is not making the
+                     * HttpClientHandler to send the cookie loaded from the cookies file */
+                /* Port = cookie.Port,*/
+            };
+            Add(cookieCopy);
+        }
     }
 
     public void SaveCookies()
