@@ -10,7 +10,7 @@ public class CookiesService : CookieContainer
     
     private const string COOKIES_FILE_NAME = "biscuits.json";
 
-    private string? _cookiesFilePath;
+    private string _cookiesFilePath;
 
     #endregion FIELDS
 

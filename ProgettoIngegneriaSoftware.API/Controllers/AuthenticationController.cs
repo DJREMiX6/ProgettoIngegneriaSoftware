@@ -38,6 +38,7 @@ public class AuthenticationController : ControllerBase
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpPost("signup", Name = "Register")]
     public async Task<IActionResult> Register([FromBody]RegisterUserInfo registerUserInfo)
     {
@@ -46,7 +47,7 @@ public class AuthenticationController : ControllerBase
             {
                 Title = "Authentication error.",
                 Detail = "User authenticated. Log out first.",
-                Status = StatusCodes.Status400BadRequest
+                Status = StatusCodes.Status401Unauthorized
             });
 
         try
