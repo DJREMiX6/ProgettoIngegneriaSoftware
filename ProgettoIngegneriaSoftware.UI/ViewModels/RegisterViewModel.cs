@@ -1,11 +1,18 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ProgettoIngegneriaSoftware.UI.Exceptions.API;
+using ProgettoIngegneriaSoftware.UI.Models;
+using ProgettoIngegneriaSoftware.UI.Services.ApiHttpClient;
 
 namespace ProgettoIngegneriaSoftware.UI.ViewModels;
 
 public partial class RegisterViewModel : BaseViewModel
 {
     #region FIELDS
+
+    private readonly ApiHttpClient _apiHttpClient;
 
     [ObservableProperty]
     private string _username;
@@ -23,8 +30,9 @@ public partial class RegisterViewModel : BaseViewModel
 
     #region CTORS
 
-    public RegisterViewModel()
+    public RegisterViewModel(ApiHttpClient apiHttpClient)
     {
+        _apiHttpClient = apiHttpClient;
     }
 
     #endregion CTORS
@@ -34,7 +42,46 @@ public partial class RegisterViewModel : BaseViewModel
     [RelayCommand]
     private async Task Register()
     {
-        throw new NotImplementedException();
+        IsBusy = true;
+        var redirect = false;
+        IToast toast;
+        try
+        {
+            var registerUserInfo = new RegisterUserInfo()
+            {
+                UserName = Username,
+                Email = Email,
+                Password = Password,
+                ConfirmPassword = ConfirmPassword
+            };
+            await _apiHttpClient.SignUpAsync(registerUserInfo);
+            toast = Toast.Make("User registered correctly. Now login.", ToastDuration.Long, 18d);
+            redirect = true;
+        }
+        catch (UnauthorizedApiException unauthorizedApiException)
+        {
+            redirect = true;
+            toast = Toast.Make(unauthorizedApiException.Message, ToastDuration.Long, textSize: 18d);
+        }
+        catch (BadRequestApiException badRequestApiException)
+        {
+            toast = Toast.Make(badRequestApiException.Message, ToastDuration.Long, textSize: 18d);
+        }
+        catch (Exception exception)
+        {
+#if DEBUG
+            toast = Toast.Make(exception.Message, ToastDuration.Long, textSize: 18d);
+#else
+            toast = Toast.Make("Unknown error.", ToastDuration.Long, textSize: 18d);
+#endif
+        }
+
+        await toast.Show();
+
+        if (redirect)
+            await NavigateToLoginPage();
+
+        IsBusy = false;
     }
 
     [RelayCommand]
