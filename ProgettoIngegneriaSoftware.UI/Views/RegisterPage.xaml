@@ -3,94 +3,114 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:components="clr-namespace:ProgettoIngegneriaSoftware.UI.Components"
-             x:Class="ProgettoIngegneriaSoftware.UI.Views.RegisterPage">
+             xmlns:viewmodel="clr-namespace:ProgettoIngegneriaSoftware.UI.ViewModels"
+             x:Class="ProgettoIngegneriaSoftware.UI.Views.RegisterPage"
+             x:DataType="viewmodel:RegisterViewModel"
+             Title="{Binding Title}">
     <ContentPage.Content>
       <VerticalStackLayout
           VerticalOptions="Start">
-        <Frame BackgroundColor="Transparent"
-               BorderColor="Transparent">
-          <VerticalStackLayout>
-            <components:FullLogo Margin="0,0,0,12"/>
-            <Frame BackgroundColor="{StaticResource Secondary}"
-                   BorderColor="Transparent"
-                   Padding="8,6"
-                   Margin="6,4">
-                <Entry x:Name="UsernameTxt"
-                       ClearButtonVisibility="Never"
-                       IsPassword="False"
-                       IsTextPredictionEnabled="True"
-                       Placeholder="Username"
-                       Text="{Binding Username}"
-                       BackgroundColor="{StaticResource Secondary}"
-                       PlaceholderColor="{StaticResource Gray100}"
-                       ReturnCommand="{Binding RegisterCommand}" />
-            </Frame>
-            <Frame BackgroundColor="{StaticResource Secondary}"
-                   BorderColor="Transparent"
-                   Padding="8,6"
-                   Margin="6,4">
-              <Entry x:Name="EmailTxt"
-                     ClearButtonVisibility="Never"
-                     IsPassword="False"
-                     IsTextPredictionEnabled="True"
-                     Placeholder="Email"
-                     Text="{Binding Email}"
-                     BackgroundColor="{StaticResource Secondary}"
-                     PlaceholderColor="{StaticResource Gray100}"
-                     ReturnCommand="{Binding RegisterCommand}" />
-            </Frame>
-            <Frame BackgroundColor="{StaticResource Secondary}"
-                   BorderColor="Transparent"
-                   Padding="8,6"
-                   Margin="6,4">
-              <Entry x:Name="PasswordTxt"
-                     ClearButtonVisibility="Never"
-                     IsPassword="True"
-                     IsTextPredictionEnabled="False"
-                     Placeholder="Password"
-                     Text="{Binding Password}"
-                     PlaceholderColor="{StaticResource Gray100}"
-                     ReturnCommand="{Binding RegisterCommand}"/>
-            </Frame>
-            <Frame BackgroundColor="{StaticResource Secondary}"
-                   BorderColor="Transparent"
-                   Padding="8,6"
-                   Margin="6,4">
-                <Entry x:Name="ConfirmPasswordTxt"
-                       ClearButtonVisibility="Never"
-                       IsPassword="True"
-                       IsTextPredictionEnabled="False"
-                       Placeholder="Confirm Password"
-                       Text="{Binding ConfirmPassword}"
-                       PlaceholderColor="{StaticResource Gray100}"
-                       ReturnCommand="{Binding RegisterCommand}"/>
-            </Frame>
+
+          <ActivityIndicator Color="{StaticResource White}"
+                             IsRunning="{Binding IsBusy}"/>
+
             <Frame BackgroundColor="Transparent"
-                   BorderColor="Transparent"
-                   Padding="0"
-                   Margin="6,4">
-              <Button x:Name="RegisterBtn"
-                      Text="Sign Up"
-                      FontSize="24"
-                      FontAttributes="Bold"
-                      BackgroundColor="{StaticResource Tertiary}"
-                      Command="{Binding RegisterCommand}"/>
+                 BorderColor="Transparent">
+
+                <VerticalStackLayout>
+
+                    <components:FullLogo Margin="0,0,0,12"/>
+
+                    <Frame BackgroundColor="{StaticResource Secondary}"
+                           BorderColor="Transparent"
+                           Padding="8,6"
+                           Margin="6,4">
+                        <Entry x:Name="UsernameTxt"
+                               ClearButtonVisibility="Never"
+                               IsPassword="False"
+                               IsTextPredictionEnabled="True"
+                               Placeholder="Username"
+                               Text="{Binding Username}"
+                               BackgroundColor="{StaticResource Secondary}"
+                               PlaceholderColor="{StaticResource Gray100}"
+                               ReturnCommand="{Binding RegisterCommand}" />
+                    </Frame>
+
+                    <Frame BackgroundColor="{StaticResource Secondary}"
+                           BorderColor="Transparent"
+                           Padding="8,6"
+                           Margin="6,4">
+                      <Entry x:Name="EmailTxt"
+                             ClearButtonVisibility="Never"
+                             IsPassword="False"
+                             IsTextPredictionEnabled="True"
+                             Placeholder="Email"
+                             Text="{Binding Email}"
+                             BackgroundColor="{StaticResource Secondary}"
+                             PlaceholderColor="{StaticResource Gray100}"
+                             ReturnCommand="{Binding RegisterCommand}" />
+                    </Frame>
+
+                    <Frame BackgroundColor="{StaticResource Secondary}"
+                           BorderColor="Transparent"
+                           Padding="8,6"
+                           Margin="6,4">
+                      <Entry x:Name="PasswordTxt"
+                             ClearButtonVisibility="Never"
+                             IsPassword="True"
+                             IsTextPredictionEnabled="False"
+                             Placeholder="Password"
+                             Text="{Binding Password}"
+                             PlaceholderColor="{StaticResource Gray100}"
+                             ReturnCommand="{Binding RegisterCommand}"/>
+                    </Frame>
+
+                    <Frame BackgroundColor="{StaticResource Secondary}"
+                           BorderColor="Transparent"
+                           Padding="8,6"
+                           Margin="6,4">
+                        <Entry x:Name="ConfirmPasswordTxt"
+                               ClearButtonVisibility="Never"
+                               IsPassword="True"
+                               IsTextPredictionEnabled="False"
+                               Placeholder="Confirm Password"
+                               Text="{Binding ConfirmPassword}"
+                               PlaceholderColor="{StaticResource Gray100}"
+                               ReturnCommand="{Binding RegisterCommand}"/>
+                    </Frame>
+
+                    <Frame BackgroundColor="Transparent"
+                           BorderColor="Transparent"
+                           Padding="0"
+                           Margin="6,4">
+
+                        <Button x:Name="RegisterBtn"
+                                Text="Sign Up"
+                                FontSize="24"
+                                FontAttributes="Bold"
+                                BackgroundColor="{StaticResource Tertiary}"
+                                Command="{Binding RegisterCommand}"
+                                IsEnabled="{Binding IsNotBusy}"/>
+
+                    </Frame>
+
+                    <Label Text="Or"
+                           FontSize="16"
+                           HorizontalTextAlignment="Center"
+                           TextColor="{StaticResource White}"/>
+
+                    <Label Text="Sign In"
+                           FontSize="24"
+                           HorizontalTextAlignment="Center"
+                           TextColor="{StaticResource White}"
+                           FontAttributes="Bold">
+                      <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NavigateToLoginPageCommand}" />
+                      </Label.GestureRecognizers>
+                    </Label>
+
+                </VerticalStackLayout>
             </Frame>
-            <Label Text="Or"
-                   FontSize="16"
-                   HorizontalTextAlignment="Center"
-                   TextColor="{StaticResource White}"/>
-            <Label Text="Sign In"
-                   FontSize="24"
-                   HorizontalTextAlignment="Center"
-                   TextColor="{StaticResource White}"
-                   FontAttributes="Bold">
-              <Label.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding NavigateToLoginPageCommand}" />
-              </Label.GestureRecognizers>
-            </Label>
-          </VerticalStackLayout>
-        </Frame>
       </VerticalStackLayout>
     </ContentPage.Content>
 </ContentPage>

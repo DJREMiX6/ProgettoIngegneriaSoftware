@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
 using ProgettoIngegneriaSoftware.Shared.Library.Models.Abstraction;
 using ProgettoIngegneriaSoftware.UI.Exceptions.API;
+using ProgettoIngegneriaSoftware.UI.Models;
 using ProgettoIngegneriaSoftware.UI.Services.UriService;
 
 namespace ProgettoIngegneriaSoftware.UI.Services.ApiHttpClient;
@@ -24,7 +25,9 @@ public class ApiHttpClient : HttpClient
     }
 
     #endregion CTORS
-    
+
+    #region AUTHENTICATION
+
     public async Task SignInAsync(ILoginUserInfo loginUserInfo, CancellationToken? cancellationToken = null)
     {
         var uri = _uriService.AuthenticationSignInPath();
@@ -40,12 +43,12 @@ public class ApiHttpClient : HttpClient
             case HttpStatusCode.Unauthorized:
             {
                 var problemDetails = await httpResponseMessage.Content.ReadFromJsonAsync<ProblemDetails>();
-                throw new UnauthorizedApiException(problemDetails?.Detail);
+                throw new UnauthorizedApiException(string.IsNullOrWhiteSpace(problemDetails?.Detail) ? problemDetails?.Title : problemDetails?.Detail);
             }
             case HttpStatusCode.BadRequest:
             {
                 var problemDetails = await httpResponseMessage.Content.ReadFromJsonAsync<ProblemDetails>();
-                throw new BadRequestApiException(problemDetails?.Detail);
+                throw new BadRequestApiException(string.IsNullOrWhiteSpace(problemDetails?.Detail) ? problemDetails?.Title : problemDetails?.Detail);
             }
             default:
                 throw new ArgumentException($"Unexpected error! Status code: {httpResponseMessage.StatusCode}.", nameof(httpResponseMessage.StatusCode));
@@ -67,12 +70,12 @@ public class ApiHttpClient : HttpClient
             case HttpStatusCode.Unauthorized:
             {
                 var problemDetails = await httpResponseMessage.Content.ReadFromJsonAsync<ProblemDetails>();
-                throw new UnauthorizedApiException(problemDetails?.Detail);
+                throw new UnauthorizedApiException(string.IsNullOrWhiteSpace(problemDetails?.Detail) ? problemDetails?.Title : problemDetails?.Detail);
             }
             case HttpStatusCode.BadRequest:
             {
                 var problemDetails = await httpResponseMessage.Content.ReadFromJsonAsync<ProblemDetails>();
-                throw new BadRequestApiException(problemDetails?.Detail);
+                throw new BadRequestApiException(string.IsNullOrWhiteSpace(problemDetails?.Detail) ? problemDetails?.Title : problemDetails?.Detail);
             }
             default:
                 throw new ArgumentException($"Unexpected error! Status code: {httpResponseMessage.StatusCode}.", nameof(httpResponseMessage.StatusCode));
@@ -93,16 +96,74 @@ public class ApiHttpClient : HttpClient
             case HttpStatusCode.Unauthorized:
             {
                 var problemDetails = await httpResponseMessage.Content.ReadFromJsonAsync<ProblemDetails>();
-                throw new UnauthorizedApiException(problemDetails?.Detail);
+                throw new UnauthorizedApiException(string.IsNullOrWhiteSpace(problemDetails?.Detail) ? problemDetails?.Title : problemDetails?.Detail);
             }
             case HttpStatusCode.BadRequest:
             {
                 var problemDetails = await httpResponseMessage.Content.ReadFromJsonAsync<ProblemDetails>();
-                throw new BadRequestApiException(problemDetails?.Detail);
+                throw new BadRequestApiException(string.IsNullOrWhiteSpace(problemDetails?.Detail) ? problemDetails?.Title : problemDetails?.Detail);
             }
             default:
                 throw new ArgumentException($"Unexpected error! Status code: {httpResponseMessage.StatusCode}.", nameof(httpResponseMessage.StatusCode));
         }
     }
+
+    #endregion AUTHENTICATION
+
+    #region EVENTS
+
+    public async Task<ICollection<IEventResult>> GetEvents()
+    {
+        var uri = _uriService.AllEventsPath();
+        var httpResponseMessage = await this.GetAsync(uri);
+
+        if (httpResponseMessage.IsSuccessStatusCode)
+        {
+            return (ICollection<IEventResult>)(await httpResponseMessage.Content.ReadFromJsonAsync<ICollection<EventResult>>() ??
+                    Array.Empty<EventResult>());
+        }
+
+        switch (httpResponseMessage.StatusCode)
+        {
+            case HttpStatusCode.Unauthorized:
+            {
+                var problemDetails = await httpResponseMessage.Content.ReadFromJsonAsync<ProblemDetails>();
+                throw new UnauthorizedApiException(string.IsNullOrWhiteSpace(problemDetails?.Detail)
+                    ? problemDetails?.Title
+                    : problemDetails?.Detail);
+            }
+            default:
+                throw new ArgumentException($"Unexpected error! Status code: {httpResponseMessage.StatusCode}.", nameof(httpResponseMessage.StatusCode));
+        }
+    }
+
+    public async Task<IEventResult?> GetEvent(Guid eventId)
+    {
+        var uri = _uriService.EventPath(eventId);
+        var httpResponseMessage = await this.GetAsync(uri);
+
+        if (httpResponseMessage.IsSuccessStatusCode)
+        {
+            return await httpResponseMessage.Content.ReadFromJsonAsync<EventResult>();
+        }
+        switch (httpResponseMessage.StatusCode)
+        {
+            case HttpStatusCode.Unauthorized:
+            {
+                var problemDetails = await httpResponseMessage.Content.ReadFromJsonAsync<ProblemDetails>();
+                throw new UnauthorizedApiException(string.IsNullOrWhiteSpace(problemDetails?.Detail)
+                    ? problemDetails?.Title
+                    : problemDetails?.Detail);
+            }
+            case HttpStatusCode.NotFound:
+            {
+                return null;
+            }
+            default:
+                throw new ArgumentException($"Unexpected error! Status code: {httpResponseMessage.StatusCode}.", nameof(httpResponseMessage.StatusCode));
+        }
+    }
+
+    #endregion EVENTS
 
 }
