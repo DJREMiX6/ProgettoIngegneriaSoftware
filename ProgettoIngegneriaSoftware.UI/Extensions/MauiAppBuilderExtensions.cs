@@ -13,7 +13,8 @@ internal static class MauiAppBuilderExtensions
             .AddEventsService()
             .AddQrCodeAnalyzerService()
             .AddUriService()
-            .AddHttpClient();
+            .AddHttpClient()
+            .AddJsonSerializerSettings();
 
         return builder;
     }

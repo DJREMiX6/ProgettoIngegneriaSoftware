@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Newtonsoft.Json;
 using ProgettoIngegneriaSoftware.UI.Services.ApiHttpClient;
 using ProgettoIngegneriaSoftware.UI.Services.EventsService;
 using ProgettoIngegneriaSoftware.UI.Services.QrCodeAnalyzerService;
@@ -32,5 +33,8 @@ internal static class ServicesExtension
             .AddApiHttpClient()
             .AddApiHttpClientHandler()
             .AddCookiesService();
+
+    internal static IServiceCollection AddJsonSerializerSettings(this IServiceCollection services) =>
+        services.AddSingleton<JsonSerializerSettings, CustomJsonSerializerSettings.CustomJsonSerializerSettings>();
 
 }

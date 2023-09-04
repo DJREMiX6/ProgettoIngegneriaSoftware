@@ -1,5 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ProgettoIngegneriaSoftware.UI.Models;
 using ProgettoIngegneriaSoftware.UI.Models.Abstraction;
 using ProgettoIngegneriaSoftware.UI.Services.EventsService;
 using ProgettoIngegneriaSoftware.UI.Views;
@@ -16,8 +18,7 @@ public partial class EventsViewModel : BaseViewModel
     
     private readonly IEventsService _eventsService;
 
-    [ObservableProperty]
-    private List<IDisplayEvent> _events;
+    public ObservableCollection<IDisplayEvent> EventsCollection { get; private set; }
 
     [ObservableProperty]
     private bool _openEventDetail;
@@ -36,16 +37,17 @@ public partial class EventsViewModel : BaseViewModel
     {
         _eventsService = eventsService;
         Title = "Events";
+        EventsCollection = new();
     }
 
     #endregion CTORS
 
     [RelayCommand]
-    private async Task Refresh_EventsRefreshView(RefreshView refreshView)
+    private async Task Refresh_EventsRefreshView()
     {
-        refreshView.IsRefreshing = true;
+        IsBusy = true;
         await GetEventsAsync();
-        refreshView.IsRefreshing = false;
+        IsBusy = false;
     }
 
     [RelayCommand]
@@ -61,40 +63,6 @@ public partial class EventsViewModel : BaseViewModel
         catch (Exception ex)
         {
             await Shell.Current.DisplayAlert("Error!", ex.Message, "Ok");
-        }
-        finally
-        {
-            IsBusy = false;
-        }
-    }
-
-    [RelayCommand]
-    private async Task ClickedOnEventAsync(IDisplayEvent eventModel)
-    {
-        if(IsBusy) return;
-
-        try
-        {
-            IsBusy = true;
-            var madeChanges = false;
-
-            if (eventModel.IsBookedByCurrentUser)
-            {
-                await UnFollowAsync(eventModel);
-                madeChanges = true;
-            }
-            else if (!eventModel.IsBookedByCurrentUser && !eventModel.IsFull)
-            {
-                await FollowAsync(eventModel);
-                madeChanges = true;
-            }
-
-            if (madeChanges)
-                await GetEventsFromServiceAsync();
-        }
-        catch (Exception ex)
-        {
-            await Shell.Current.DisplayAlert("Error!", "Error with this action.", "Ok");
         }
         finally
         {
@@ -140,21 +108,14 @@ public partial class EventsViewModel : BaseViewModel
         await GetEventsAsync();
     }
 
-    private async Task UnFollowAsync(IDisplayEvent eventModel)
-    {
-        await _eventsService.UnFollowEventAsync(eventModel.Id);
-    }
-
-    private async Task FollowAsync(IDisplayEvent eventModel)
-    {
-        await _eventsService.FollowEventAsync(eventModel.Id);
-    }
-
     private async Task GetEventsFromServiceAsync()
     {
-        Events = new List<IDisplayEvent>();
+        EventsCollection.Clear();
         var events = await _eventsService.GetEventsAsync();
-        Events.AddRange(events);
+        foreach (var displayEvent in events)
+        {
+            EventsCollection.Add(displayEvent);
+        }
     }
 
 }

@@ -113,12 +113,12 @@ public partial class EventDetailViewModel : BaseViewModel
 
     private async Task UnFollowAsync(IDisplayEvent eventModel)
     {
-        await _eventsService.UnFollowEventAsync(eventModel.Id);
+        throw new NotImplementedException();
     }
 
     private async Task FollowAsync(IDisplayEvent eventModel)
     {
-        await _eventsService.FollowEventAsync(eventModel.Id);
+        throw new NotImplementedException();
     }
 
 }

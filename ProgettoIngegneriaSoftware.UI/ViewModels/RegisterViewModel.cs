@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using ProgettoIngegneriaSoftware.UI.Exceptions.API;
 using ProgettoIngegneriaSoftware.UI.Models;
 using ProgettoIngegneriaSoftware.UI.Services.ApiHttpClient;
+using ProgettoIngegneriaSoftware.UI.Views;
 
 namespace ProgettoIngegneriaSoftware.UI.ViewModels;
 
@@ -87,7 +88,9 @@ public partial class RegisterViewModel : BaseViewModel
     [RelayCommand]
     private async Task NavigateToLoginPage()
     {
+        IsBusy = true;
         await Shell.Current.GoToAsync("..", animate: true);
+        IsBusy = false;
     }
 
     #endregion COMMANDS

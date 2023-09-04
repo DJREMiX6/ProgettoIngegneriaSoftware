@@ -3,7 +3,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodel="clr-namespace:ProgettoIngegneriaSoftware.UI.ViewModels"
-             xmlns:models="clr-namespace:ProgettoIngegneriaSoftware.UI.Models"
+             xmlns:models="clr-namespace:ProgettoIngegneriaSoftware.UI.Models.Abstraction"
              x:DataType="viewmodel:EventsViewModel"
              x:Class="ProgettoIngegneriaSoftware.UI.Views.EventsPage"
              Title="{Binding Title}">
@@ -11,9 +11,9 @@
         <RefreshView x:Name="EventsRefreshView"
                      Command="{Binding Refresh_EventsRefreshViewCommand}"
                      CommandParameter="{Binding Source={x:Reference EventsRefreshView}, Path=.}">
-            <CollectionView ItemsSource="{Binding Events}">
+            <CollectionView ItemsSource="{Binding EventsCollection}">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:EventResult">
+                    <DataTemplate x:DataType="models:IDisplayEvent">
                         <Grid Padding="10">
                             <Frame HeightRequest="250"
                                Padding="0"
@@ -49,78 +49,14 @@
                                         </Button.Shadow>
                                     </Button>
 
-                                    <Button Margin="0,-20,60,0"
-                                        Grid.Column="2"
-                                        Grid.Row="1"
-                                        VerticalOptions="Start"
-                                        HorizontalOptions="End"
-                                        CornerRadius="100"
-                                        FontAttributes="Bold"
-                                        HeightRequest="40"
-                                        WidthRequest="80"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:EventsViewModel}}, Path=ClickedOnEventCommand}"
-                                        CommandParameter="{Binding .}">
-                                        <Button.Triggers>
-                                            <MultiTrigger TargetType="Button">
-                                                <MultiTrigger.Conditions>
-                                                    <BindingCondition Binding="{Binding IsBookable}" Value="True" />
-                                                    <BindingCondition Binding="{Binding IsBookedByCurrentUser}" Value="False" />
-                                                </MultiTrigger.Conditions>
-                                                <Setter Property="BackgroundColor" Value="{StaticResource Accent}" />
-                                                <Setter Property="TextColor" Value="{StaticResource White}" />
-                                                <Setter Property="Text" Value="Follow" />
-                                                <Setter Property="ImageSource" Value="null" />
-                                            </MultiTrigger>
-
-                                            <MultiTrigger TargetType="Button">
-                                                <MultiTrigger.Conditions>
-                                                    <BindingCondition Binding="{Binding IsBookable}" Value="True" />
-                                                    <BindingCondition Binding="{Binding IsBookedByCurrentUser}" Value="True" />
-                                                </MultiTrigger.Conditions>
-                                                <Setter Property="BackgroundColor" Value="{StaticResource Tertiary}" />
-                                                <Setter Property="Text" Value="" />
-                                                <Setter Property="ImageSource" Value="Resources/Images/Icons/accept_icon.svg" />
-                                                <Setter Property="WidthRequest" Value="40" />
-                                            </MultiTrigger>
-
-                                            <MultiTrigger TargetType="Button">
-                                                <MultiTrigger.Conditions>
-                                                    <BindingCondition Binding="{Binding IsBookable}" Value="False" />
-                                                    <BindingCondition Binding="{Binding IsBookedByCurrentUser}" Value="True" />
-                                                </MultiTrigger.Conditions>
-                                                <Setter Property="BackgroundColor" Value="{StaticResource Tertiary}" />
-                                                <Setter Property="Text" Value="" />
-                                                <Setter Property="ImageSource" Value="Resources/Images/Icons/accept_icon.svg" />
-                                                <Setter Property="WidthRequest" Value="40" />
-                                            </MultiTrigger>
-
-                                            <MultiTrigger TargetType="Button">
-                                                <MultiTrigger.Conditions>
-                                                    <BindingCondition Binding="{Binding IsBookable}" Value="False" />
-                                                    <BindingCondition Binding="{Binding IsBookedByCurrentUser}" Value="False" />
-                                                </MultiTrigger.Conditions>
-                                                <Setter Property="BackgroundColor" Value="{StaticResource Gray500}" />
-                                                <Setter Property="Text" Value="Full" />
-                                                <Setter Property="ImageSource" Value="null" />
-                                                <Setter Property="IsEnabled" Value="False" />
-                                            </MultiTrigger>
-                                        </Button.Triggers>
-                                        <Button.Shadow>
-                                            <Shadow Brush="{StaticResource BlackBrush}"
-                                                Radius="10"
-                                                Opacity=".25"
-                                                Offset="0,2"/>
-                                        </Button.Shadow>
-                                    </Button>
-
                                     <Label Text="{Binding Name}"
-                                       LineBreakMode="TailTruncation"
-                                       FontSize="20"
-                                       FontAttributes="Bold"
-                                       Margin="10,0,15,0"
-                                       Grid.ColumnSpan="2"
-                                       Grid.Column="0"
-                                       Grid.Row="1" />
+                                           LineBreakMode="TailTruncation"
+                                           FontSize="20"
+                                           FontAttributes="Bold"
+                                           Margin="10,0,15,0"
+                                           Grid.ColumnSpan="2"
+                                           Grid.Column="0"
+                                           Grid.Row="1" />
 
                                     <Label Text="{Binding Description}"
                                        LineBreakMode="WordWrap"
@@ -200,7 +136,8 @@
                                        Grid.Column="1"
                                        VerticalOptions="End"
                                        HorizontalOptions="Center"
-                                       Margin="0,0,0,5"/>
+                                       Margin="0,0,0,10"
+                                       LineBreakMode="TailTruncation"/>
 
                                     <BoxView Color="{StaticResource Gray300}"
                                          Grid.Row="2"

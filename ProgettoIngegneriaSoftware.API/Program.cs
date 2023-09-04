@@ -4,7 +4,8 @@ using ProgettoIngegneriaSoftware.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
 builder.Services
     .AddEndpointsApiExplorer()
     .AddSwaggerGen()    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

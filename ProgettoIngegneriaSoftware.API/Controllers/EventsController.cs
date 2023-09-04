@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
+using System.Text.Json;
 using ProgettoIngegneriaSoftware.API.Models;
 using ProgettoIngegneriaSoftware.API.Services.AuthenticationService;
 using ProgettoIngegneriaSoftware.API.Services.EventService;

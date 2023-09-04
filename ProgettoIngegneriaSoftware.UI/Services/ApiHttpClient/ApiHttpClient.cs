@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ProgettoIngegneriaSoftware.Shared.Library.Models.Abstraction;
 using ProgettoIngegneriaSoftware.UI.Exceptions.API;
 using ProgettoIngegneriaSoftware.UI.Models;
@@ -112,15 +113,15 @@ public class ApiHttpClient : HttpClient
 
     #region EVENTS
 
-    public async Task<ICollection<IEventResult>> GetEvents()
+    public async Task<string> GetEvents()
     {
         var uri = _uriService.AllEventsPath();
         var httpResponseMessage = await this.GetAsync(uri);
 
         if (httpResponseMessage.IsSuccessStatusCode)
         {
-            return (ICollection<IEventResult>)(await httpResponseMessage.Content.ReadFromJsonAsync<ICollection<EventResult>>() ??
-                    Array.Empty<EventResult>());
+            var stringData = await httpResponseMessage.Content.ReadAsStringAsync();
+            return stringData;
         }
 
         switch (httpResponseMessage.StatusCode)
@@ -137,14 +138,14 @@ public class ApiHttpClient : HttpClient
         }
     }
 
-    public async Task<IEventResult?> GetEvent(Guid eventId)
+    public async Task<string> GetEvent(Guid eventId)
     {
         var uri = _uriService.EventPath(eventId);
         var httpResponseMessage = await this.GetAsync(uri);
 
         if (httpResponseMessage.IsSuccessStatusCode)
         {
-            return await httpResponseMessage.Content.ReadFromJsonAsync<EventResult>();
+            return await httpResponseMessage.Content.ReadAsStringAsync();
         }
         switch (httpResponseMessage.StatusCode)
         {
@@ -157,7 +158,7 @@ public class ApiHttpClient : HttpClient
             }
             case HttpStatusCode.NotFound:
             {
-                return null;
+                return string.Empty;
             }
             default:
                 throw new ArgumentException($"Unexpected error! Status code: {httpResponseMessage.StatusCode}.", nameof(httpResponseMessage.StatusCode));
@@ -165,5 +166,4 @@ public class ApiHttpClient : HttpClient
     }
 
     #endregion EVENTS
-
 }
