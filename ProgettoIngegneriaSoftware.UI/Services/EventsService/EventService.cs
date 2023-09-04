@@ -39,7 +39,8 @@ public class EventService : IEventsService
         var eventData = await _apiHttpClient.GetEvent(eventId);
         if (string.IsNullOrWhiteSpace(eventData))
             return null;
-        return (IDisplayEvent)JsonConvert.DeserializeObject<IEventResult>(eventData, _serializerSettings);
+        var deserializedEventData = (IDisplayEvent)JsonConvert.DeserializeObject<IEventResult>(eventData, _serializerSettings);
+        return deserializedEventData;
     }
 
     #endregion IEventService IMP

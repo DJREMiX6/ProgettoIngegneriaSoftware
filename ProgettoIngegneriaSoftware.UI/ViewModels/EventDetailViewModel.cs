@@ -7,19 +7,11 @@ using ProgettoIngegneriaSoftware.UI.Services.EventsService;
 namespace ProgettoIngegneriaSoftware.UI.ViewModels;
 
 [QueryProperty("EventId", "EventId")]
-[QueryProperty("EventModelToDetail", "EventModelToDetail")]
-[QueryProperty("ToFollow", "ToFollow")]
 public partial class EventDetailViewModel : BaseViewModel
 {
 
     [ObservableProperty]
-    private List<IDisplayEvent> _eventWrapper;
-
-    [ObservableProperty]
     private IDisplayEvent? _eventModelToDetail;
-
-    [ObservableProperty]
-    private bool _toFollow;
 
     [ObservableProperty]
     private Guid _eventId;
@@ -30,95 +22,35 @@ public partial class EventDetailViewModel : BaseViewModel
     {
         _eventsService = eventsService;
     }
-
-    [RelayCommand]
-    private async Task ClickedOnEventAsync()
+    
+    public async Task GetEventFromServiceAsync()
     {
-        if (IsBusy) return;
-
         try
         {
-            IsBusy = true;
-            var madeChanges = false;
-            EventId = EventModelToDetail.Id;
+            var eventModel = await _eventsService.GetEventAsync(EventId);
 
-            if (EventModelToDetail.IsBookedByCurrentUser)
+            if (eventModel == null)
             {
-                await UnFollowAsync(EventModelToDetail);
-                madeChanges = true;
-            }
-            else if (!EventModelToDetail.IsBookedByCurrentUser && !EventModelToDetail.IsFull)
-            {
-                await FollowAsync(EventModelToDetail);
-                madeChanges = true;
-            }
-
-            if (madeChanges)
-                await GetEventFromServiceAsync();
-        }
-        catch (Exception ex)
-        {
-            await Shell.Current.DisplayAlert("Error!", "Error with this action.", "Ok");
-        }
-        finally
-        {
-            IsBusy = false;
-        }
-    }
-
-    [RelayCommand]
-    private async Task GetEventFromServiceAsync()
-    {
-        var eventModel = await _eventsService.GetEventAsync(EventId);
-        if (eventModel == null)
-        {
-            await Shell.Current.GoToAsync("..");
-            await Shell.Current.DisplayAlert("Error!", "There was an error loading the Event.", "Ok");
-        }
-        else
-        {
-            EventWrapper = new List<IDisplayEvent>();
-            EventModelToDetail = new EventResult();
-            EventModelToDetail = eventModel;
-            EventId = eventModel.Id;
-            EventWrapper.Add(EventModelToDetail);
-        }
-    }
-
-    [RelayCommand]
-    private void OnNavigatedTo()
-    {
-        if (EventId != Guid.Empty)
-            GetEventFromServiceAsync().Wait();
-        else
-        {
-            EventId = EventModelToDetail!.Id;
-        }
-
-        EventWrapper = new List<IDisplayEvent> { EventModelToDetail! };
-
-        if (ToFollow)
-        {
-            if(!EventModelToDetail!.IsBookedByCurrentUser)
-            {
-                FollowAsync(EventModelToDetail!).Wait();
-                GetEventFromServiceAsync().Wait();
+                await Shell.Current.GoToAsync("..");
+                await Shell.Current.DisplayAlert("Error!", "There was an error loading the Event.", "Ok");
             }
             else
             {
-                Shell.Current.DisplayAlert("Attention!", "You are already following this event.", "Ok");
+                EventModelToDetail = eventModel;
             }
         }
+        catch (Exception ex)
+        {
+
+        }
+        
     }
 
-    private async Task UnFollowAsync(IDisplayEvent eventModel)
+    public async Task OnNavigatedTo()
     {
-        throw new NotImplementedException();
-    }
-
-    private async Task FollowAsync(IDisplayEvent eventModel)
-    {
-        throw new NotImplementedException();
+        IsBusy = true;
+        await GetEventFromServiceAsync();
+        IsBusy = false;
     }
 
 }

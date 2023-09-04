@@ -22,56 +22,6 @@
                                Grid.ColumnSpan="3"
                                Grid.Row="0"/>
 
-                        <Button Grid.Column="1"
-                                Grid.Row="1"
-                                VerticalOptions="Start"
-                                HorizontalOptions="Center"
-                                CornerRadius="100"
-                                FontAttributes="Bold"
-                                HeightRequest="40"
-                                WidthRequest="80"
-                                Margin="0,-20,0,0"
-                                Command="{Binding ClickedOnEventCommand}" >
-                            <Button.Triggers>
-                                <MultiTrigger TargetType="Button">
-                                    <MultiTrigger.Conditions>
-                                        <BindingCondition Binding="{Binding EventModelToDetail.IsBookable}" Value="True" />
-                                        <BindingCondition Binding="{Binding EventModelToDetail.IsBookedByCurrentUser}" Value="False" />
-                                    </MultiTrigger.Conditions>
-                                    <Setter Property="BackgroundColor" Value="{StaticResource Accent}" />
-                                    <Setter Property="TextColor" Value="{StaticResource White}" />
-                                    <Setter Property="Text" Value="Follow" />
-                                    <Setter Property="ImageSource" Value="null" />
-                                </MultiTrigger>
-
-                                <MultiTrigger TargetType="Button">
-                                    <MultiTrigger.Conditions>
-                                        <BindingCondition Binding="{Binding EventModelToDetail.IsBookedByCurrentUser}" Value="True" />
-                                    </MultiTrigger.Conditions>
-                                    <Setter Property="BackgroundColor" Value="{StaticResource Tertiary}" />
-                                    <Setter Property="Text" Value="" />
-                                    <Setter Property="ImageSource" Value="Resources/Images/Icons/accept_icon.svg" />
-                                    <Setter Property="WidthRequest" Value="40" />
-                                </MultiTrigger>
-
-                                <MultiTrigger TargetType="Button">
-                                    <MultiTrigger.Conditions>
-                                        <BindingCondition Binding="{Binding EventModelToDetail.IsBookable}" Value="False" />
-                                        <BindingCondition Binding="{Binding EventModelToDetail.IsBookedByCurrentUser}" Value="False" />
-                                    </MultiTrigger.Conditions>
-                                    <Setter Property="BackgroundColor" Value="{StaticResource Gray500}" />
-                                    <Setter Property="Text" Value="Full" />
-                                    <Setter Property="ImageSource" Value="null" />
-                                    <Setter Property="IsEnabled" Value="False" />
-                                </MultiTrigger>
-                            </Button.Triggers>
-                            <Button.Shadow>
-                                <Shadow Brush="{StaticResource BlackBrush}"
-                                        Radius="10"
-                                        Opacity=".25"
-                                        Offset="0,2"/>
-                            </Button.Shadow>
-                        </Button>
                         <VerticalStackLayout Grid.ColumnSpan="3" 
                                              Grid.Row="1">
                             <Label Text="{Binding EventModelToDetail.Name}"

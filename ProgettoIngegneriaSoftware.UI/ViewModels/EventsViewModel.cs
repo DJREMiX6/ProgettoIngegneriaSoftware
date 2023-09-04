@@ -10,7 +10,6 @@ namespace ProgettoIngegneriaSoftware.UI.ViewModels;
 
 [QueryProperty("OpenEventDetail", "OpenEventDetail")]
 [QueryProperty("EventIdToOpenDetail", "EventIdToOpenDetail")]
-[QueryProperty("ToFollow", "ToFollow")]
 public partial class EventsViewModel : BaseViewModel
 {
 
@@ -24,10 +23,7 @@ public partial class EventsViewModel : BaseViewModel
     private bool _openEventDetail;
 
     [ObservableProperty]
-    private int _eventIdToOpenDetail;
-
-    [ObservableProperty]
-    private bool _toFollow;
+    private Guid _eventIdToOpenDetail;
 
     #endregion FIELDS
 
@@ -71,20 +67,20 @@ public partial class EventsViewModel : BaseViewModel
     }
 
     [RelayCommand]
-    private async Task OpenQrCodeDetailViewAsync(IDisplayEvent readableEventModel)
+    private async Task OpenQrCodeDetailViewAsync(IDisplayEvent eventModel)
     {
         await Shell.Current.GoToAsync(nameof(QrCodeDetailView), true, new Dictionary<string, object>()
         {
-            {"EventId", readableEventModel.Id}
+            {"EventId", eventModel.Id}
         });
     }
 
     [RelayCommand]
-    private async Task OpenEventDetailViewAsync(IDisplayEvent readableEventModel)
+    private async Task OpenEventDetailViewAsync(IDisplayEvent eventModel)
     {
         await Shell.Current.GoToAsync(nameof(EventDetailView), true, new Dictionary<string, object>()
         {
-            {"EventModelToDetail", readableEventModel}
+            {"EventId", eventModel.Id}
         });
     }
 
@@ -95,12 +91,10 @@ public partial class EventsViewModel : BaseViewModel
         {
             await Shell.Current.GoToAsync(nameof(EventDetailView), true, new Dictionary<string, object>()
             {
-                {"EventId", EventIdToOpenDetail},
-                {"ToFollow", ToFollow}
+                {"EventId", EventIdToOpenDetail}
             });
             OpenEventDetail = false;
-            EventIdToOpenDetail = 0;
-            ToFollow = false;
+            EventIdToOpenDetail = Guid.Empty;
             return;
         }
 

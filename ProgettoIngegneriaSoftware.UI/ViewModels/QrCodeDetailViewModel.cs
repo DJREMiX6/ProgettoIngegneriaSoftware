@@ -8,7 +8,7 @@ public partial class QrCodeDetailViewModel : BaseViewModel
 {
 
     [ObservableProperty]
-    private int _eventId;
+    private Guid _eventId;
 
     public QrCodeDetailViewModel()
     {
