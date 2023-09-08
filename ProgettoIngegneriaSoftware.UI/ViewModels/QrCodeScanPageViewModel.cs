@@ -26,9 +26,8 @@ public partial class QrCodeScanPageViewModel : BaseViewModel
     {
         await Shell.Current.GoToAsync("..");
     }
-
-    [RelayCommand]
-    private void OnNavigatedTo(CameraBarcodeReaderView cameraBarcodeReaderView)
+    
+    public void OnNavigatedTo(CameraBarcodeReaderView cameraBarcodeReaderView)
     {
         _cameraBarcodeReaderView = cameraBarcodeReaderView;
 
@@ -40,9 +39,8 @@ public partial class QrCodeScanPageViewModel : BaseViewModel
 
         HasExited = false;
     }
-
-    [RelayCommand]
-    private async Task BarCodesDetected(BarcodeResult[] barCodeResults)
+    
+    public async Task BarCodesDetected(BarcodeResult[] barCodeResults)
     {
         if (IsBusy) return;
 
@@ -51,17 +49,15 @@ public partial class QrCodeScanPageViewModel : BaseViewModel
             IsBusy = true;
             
 
-            Int32? eventId = null;
+            Guid eventId = Guid.Empty;
             foreach (var barcodeResult in barCodeResults)
             {
-                if (await _qrCodeAnalyzerService.IsValidQrCodeResult(barcodeResult.Value))
-                {
-                    eventId = await _qrCodeAnalyzerService.GetIdFromQrCodeResult(barcodeResult.Value);
+                eventId = await _qrCodeAnalyzerService.GetIdFromQrCodeResult(barcodeResult.Value);
+                if (eventId != Guid.Empty)
                     break;
-                }
             }
 
-            if (eventId != null)
+            if (eventId != Guid.Empty)
             {
                 await Shell.Current.GoToAsync(nameof(EventDetailView), true, new Dictionary<string, object>()
                 {

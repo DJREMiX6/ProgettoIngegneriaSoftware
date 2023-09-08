@@ -6,9 +6,10 @@ public class UriService : IUriService
     #region CONSTS
 
     //TODO MOVE TO APPSETTINGS.JS
+
     private const string SCHEME = "http";
-    private const string HOSTNAME = "10.0.2.2";
-    private const string PORT = "5017";
+    private const string HOSTNAME = "192.168.1.5";
+    private const string PORT = "8089";
     private const string API_PATH = "api";
     private const string BASE_AUTHENTICATION_PATH = "Authentication";
     private const string AUTHENTICATION_SIGN_IN_PATH = "signin";
@@ -20,7 +21,7 @@ public class UriService : IUriService
 
     #region IUriService IMP
 
-    public string BasePath() => $"{SCHEME}://{HOSTNAME}:{PORT}"; //http://localhost:5017
+    public string BasePath() => $"{SCHEME}://{HOSTNAME}:{PORT}"; 
 
     public string BaseApiPath() => $"{BasePath()}/{API_PATH}";
 

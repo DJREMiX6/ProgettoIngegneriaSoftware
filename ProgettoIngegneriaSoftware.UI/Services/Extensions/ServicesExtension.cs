@@ -14,7 +14,7 @@ internal static class ServicesExtension
         services.AddSingleton<IEventsService, EventsService.EventService>();
 
     internal static IServiceCollection AddQrCodeAnalyzerService(this IServiceCollection services) =>
-        services.AddTransient<IQrCodeAnalyzerService, QrCodeLocalAnalyzerService>();
+        services.AddTransient<IQrCodeAnalyzerService, QrCodeAnalyzerService.QrCodeAnalyzerService>();
 
     internal static IServiceCollection AddUriService(this IServiceCollection services) =>
         services.AddTransient<IUriService, UriService.UriService>();

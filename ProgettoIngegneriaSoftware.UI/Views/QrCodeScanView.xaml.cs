@@ -6,12 +6,15 @@ namespace ProgettoIngegneriaSoftware.UI.Views;
 
 public partial class QrCodeScanPage : ContentPage
 {
+
+    private readonly QrCodeScanPageViewModel _viewModel;
+
     public QrCodeScanPage(QrCodeScanPageViewModel qrCodeScanPageViewModel)
     {
+        _viewModel = qrCodeScanPageViewModel;
+        BindingContext = _viewModel;
         InitializeComponent();
         SetupQrCodeReader();
-
-        BindingContext = qrCodeScanPageViewModel;
     }
 
     private void SetupQrCodeReader()
@@ -29,17 +32,17 @@ public partial class QrCodeScanPage : ContentPage
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);
-        (BindingContext as QrCodeScanPageViewModel)!.NavigatedToCommand.Execute(cameraBarcodeReaderView);
+        _viewModel.OnNavigatedTo(cameraBarcodeReaderView);
     }
 
     public void CameraBarcodeReaderView_OnBarcodesDetected(object? sender, BarcodeDetectionEventArgs e)
     {
         cameraBarcodeReaderView.IsDetecting = false;
         cameraBarcodeReaderView.IsEnabled = false;
-        var context = (BindingContext as QrCodeScanPageViewModel)!;
+
         Dispatcher.DispatchAsync(async () =>
         {
-            await context.BarCodesDetectedCommand.ExecuteAsync(e.Results);
+            await _viewModel.BarCodesDetected(e.Results);
         });
     }
 
