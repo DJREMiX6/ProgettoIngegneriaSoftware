@@ -4,12 +4,12 @@ using ProgettoIngegneriaSoftware.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers()
-    .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
 builder.Services
     .AddEndpointsApiExplorer()
     .AddSwaggerGen()    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-    .AddConfiguredServices(builder.Configuration);
+    .AddConfiguredServices(builder.Configuration)
+    .AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
 
 var app = builder.Build();
 
@@ -27,5 +27,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGet("/", () => "Ok");
 
 app.Run();
