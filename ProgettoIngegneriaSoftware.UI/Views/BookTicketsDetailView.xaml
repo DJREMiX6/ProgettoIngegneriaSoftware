@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:ProgettoIngegneriaSoftware.UI.ViewModels"
+             xmlns:models="clr-namespace:ProgettoIngegneriaSoftware.Shared.Library.Models.Abstraction;assembly=ProgettoIngegneriaSoftware.Shared.Library"
+             x:Class="ProgettoIngegneriaSoftware.UI.Views.BookTicketsDetailView"
+             x:DataType="viewmodels:BookTicketsDetailViewModel"
+             Title="{Binding Title}"
+             Shell.PresentationMode="ModalAnimated">
+    <ContentPage.Content>
+        <ScrollView>
+            <VerticalStackLayout>
+
+                <CollectionView ItemsSource="{Binding SelectedSeats}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:ISeatResult">
+
+                            <SwipeView>
+
+                                <SwipeView.LeftItems>
+                                    <SwipeItem Text="Remove"
+                                               BackgroundColor="Red"/>
+
+                                </SwipeView.LeftItems>
+                                <Frame CornerRadius="8"
+                                       BackgroundColor="{StaticResource White}"
+                                       BorderColor="{StaticResource White}"
+                                       Margin="5"
+                                       Padding="5">
+                                    <Grid ColumnDefinitions="*,*,*"
+                                          RowDefinitions="*,*">
+
+                                        <Label Text="Zone"
+                                               FontSize="14"
+                                               FontAttributes="Bold"
+                                               TextColor="{StaticResource Primary}"
+                                               Grid.Row="0"
+                                               Grid.Column="0"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Start"
+                                               Margin="0,2,0,0"/>
+
+                                        <Label Text="{Binding SeatZoneName}"
+                                               TextColor="{StaticResource Gray500}"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center"
+                                               FontSize="10"
+                                               Grid.Row="1"
+                                               Grid.Column="0"
+                                               VerticalOptions="End"
+                                               HorizontalOptions="Center"
+                                               Margin="0,0,0,10"/>
+
+                                        <BoxView Color="{StaticResource Gray300}"
+                                                 Grid.Row="0"
+                                                 Grid.RowSpan="2"
+                                                 Grid.Column="0"
+                                                 WidthRequest="1"
+                                                 Margin="0,3,0,3"
+                                                 HorizontalOptions="End">
+                                            <BoxView.Shadow>
+                                                <Shadow Brush="{StaticResource BlackBrush}"
+                                                        Radius="10"
+                                                        Opacity=".25"
+                                                        Offset="0,-2" />
+                                            </BoxView.Shadow>
+                                        </BoxView>
+
+                                        <Label Text="Row"
+                                               FontSize="14"
+                                               FontAttributes="Bold"
+                                               TextColor="{StaticResource Primary}"
+                                               Grid.Row="0"
+                                               Grid.Column="1"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Start"
+                                               Margin="0,2,0,0"/>
+
+                                        <Label Text="{Binding SeatRowName}"
+                                               TextColor="{StaticResource Gray500}"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center"
+                                               FontSize="10"
+                                               Grid.Row="1"
+                                               Grid.Column="1"
+                                               VerticalOptions="End"
+                                               HorizontalOptions="Center"
+                                               Margin="0,0,0,10"/>
+
+                                        <BoxView Color="{StaticResource Gray300}"
+                                                 Grid.Row="0"
+                                                 Grid.RowSpan="2"
+                                                 Grid.Column="1"
+                                                 WidthRequest="1"
+                                                 Margin="0,3,0,3"
+                                                 HorizontalOptions="End">
+                                            <BoxView.Shadow>
+                                                <Shadow Brush="{StaticResource BlackBrush}"
+                                                        Radius="10"
+                                                        Opacity=".25"
+                                                        Offset="0,-2" />
+                                            </BoxView.Shadow>
+                                        </BoxView>
+
+                                        <Label Text="Seat"
+                                               FontSize="14"
+                                               FontAttributes="Bold"
+                                               TextColor="{StaticResource Primary}"
+                                               Grid.Row="0"
+                                               Grid.Column="2"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Start"
+                                               Margin="0,2,0,0"/>
+
+                                        <Label Text="{Binding SeatIndex}"
+                                               TextColor="{StaticResource Gray500}"
+                                               HorizontalTextAlignment="Center"
+                                               VerticalTextAlignment="Center"
+                                               FontSize="10"
+                                               Grid.Row="1"
+                                               Grid.Column="2"
+                                               VerticalOptions="End"
+                                               HorizontalOptions="Center"
+                                               Margin="0,0,0,10"/>
+
+                                    </Grid>
+
+                                </Frame>
+
+                            </SwipeView>
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                
+
+                <Frame CornerRadius="8"
+                       BackgroundColor="{StaticResource Tertiary}"
+                       BorderColor="{StaticResource Tertiary}"
+                       Margin="5"
+                       Padding="5">
+
+                    <Grid ColumnDefinitions="*,*,*,60"
+                          RowDefinitions="*,*"
+                          Padding="5">
+
+                        <Label Text="Zone"
+                               TextColor="{StaticResource Primary}"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               Grid.Row="0"
+                               Grid.Column="0"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+
+                        <Picker x:Name="SeatZonePicker"
+                                Title="Select"
+                                TitleColor="{StaticResource Gray100}"
+                                ItemsSource="{Binding AvailableSeatZones}"
+                                SelectedItem="{Binding SelectedSeatZone}"
+                                SelectedIndexChanged="SeatZonePicker_OnSelectedIndexChanged"
+                                Grid.Column="0"
+                                Grid.Row="1"
+                                TextColor="{StaticResource White}"
+                                HorizontalTextAlignment="Center"/>
+
+                        <Label Text="Row"
+                               TextColor="{StaticResource Primary}"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               Grid.Row="0"
+                               Grid.Column="1"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+
+                        <Picker x:Name="SeatRowPicker"
+                                Title="Select"
+                                TitleColor="{StaticResource Gray100}"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                ItemsSource="{Binding AvailableSeatRows}"
+                                SelectedItem="{Binding SelectedSeatRow}"
+                                SelectedIndexChanged="SeatRowPicker_OnSelectedIndexChanged"
+                                IsVisible="{Binding IsSeatZoneSelected}"
+                                Grid.Column="1" 
+                                Grid.Row="1"
+                                TextColor="{StaticResource White}"
+                                HorizontalTextAlignment="Center"/>
+
+                        <Label Text="Seat"
+                               TextColor="{StaticResource Primary}"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               Grid.Row="0"
+                               Grid.Column="2"
+                               HorizontalOptions="Center"
+                               Margin="0"
+                               VerticalOptions="Center"/>
+
+                        <Picker x:Name="SeatIndexPicker"
+                                Title="Select"
+                                TitleColor="{StaticResource Gray100}"
+                                ItemsSource="{Binding AvailableSeatIndexes}"
+                                SelectedItem="{Binding SelectedSeatIndex}"
+                                SelectedIndexChanged="SeatIndexPicker_OnSelectedIndexChanged"
+                                IsVisible="{Binding IsSeatRowSelected}"
+                                Grid.Column="2" 
+                                Grid.Row="1"
+                                TextColor="{StaticResource White}"
+                                HorizontalTextAlignment="Center"/>
+
+                        <Button Text="Add"
+                                Grid.Column="3"
+                                Grid.Row="0"
+                                Grid.RowSpan="2"
+                                FontSize="16"
+                                FontAttributes="Bold"
+                                Padding="0"
+                                HeightRequest="60"
+                                WidthRequest="60"
+                                BackgroundColor="{StaticResource Accent }"
+                                Command="{Binding AddTicketToSelectedCommand}"
+                                IsEnabled="{Binding IsAddButtonEnabled}"
+                                Margin="5,0,0,0"/>
+
+                    </Grid>
+                </Frame>
+
+                <Button Text="Book Tickets"
+                        FontAttributes="Bold"
+                        FontSize="22"
+                        BackgroundColor="{StaticResource Accent}"
+                        Margin="5"
+                        IsEnabled="{Binding IsNotBusy}"
+                        IsVisible="{Binding SeatsSelected}"
+                        Command="{Binding BookTicketsCommand}"/>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

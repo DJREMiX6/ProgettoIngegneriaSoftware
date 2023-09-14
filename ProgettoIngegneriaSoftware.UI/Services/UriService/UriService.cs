@@ -16,6 +16,7 @@ public class UriService : IUriService
     private const string AUTHENTICATION_SIGN_UP_PATH = "signup";
     private const string AUTHENTICATION_SIGN_OUT_PATH = "signout";
     private const string BASE_EVENTS_PATH = "Events";
+    private const string BASE_BOOKING_PATH = "Booking";
 
     #endregion CONSTS
 
@@ -46,6 +47,16 @@ public class UriService : IUriService
     public string EventPath(Guid eventId) => $"{BaseEventsPath()}/{eventId}";
 
     #endregion EVENTS
+
+    #region BOOKING
+
+    private string BaseBookingPath() => $"{BaseApiPath()}/{BASE_BOOKING_PATH}/event";
+
+    public string BookSeatPath(Guid eventId) => $"{BaseBookingPath()}/{eventId}";
+
+    public string CancelBookedSeatPath(Guid eventId) => BookSeatPath(eventId);
+
+    #endregion BOOKING
 
     #endregion IUriService IMP
 

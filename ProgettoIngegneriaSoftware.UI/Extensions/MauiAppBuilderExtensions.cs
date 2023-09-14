@@ -14,6 +14,7 @@ internal static class MauiAppBuilderExtensions
             .AddQrCodeAnalyzerService()
             .AddUriService()
             .AddHttpClient()
+            .AddEventBookingService()
             .AddJsonSerializerSettings();
 
         return builder;
@@ -35,12 +36,18 @@ internal static class MauiAppBuilderExtensions
 
             .AddTransient<EventDetailView>()
             .AddTransient<EventDetailViewModel>()
-            
+
             .AddTransient<QrCodeScanPage>()
             .AddTransient<QrCodeScanPageViewModel>()
-            
+
             .AddTransient<QrCodeDetailView>()
-            .AddTransient<QrCodeDetailViewModel>();
+            .AddTransient<QrCodeDetailViewModel>()
+
+            .AddTransient<BookTicketsDetailView>()
+            .AddTransient<BookTicketsDetailViewModel>()
+
+            .AddTransient<BookedTicketsDetailView>()
+            .AddTransient<BookedTicketsDetailViewModel>();
 
         return builder;
     }

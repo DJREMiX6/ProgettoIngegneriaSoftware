@@ -17,6 +17,8 @@ namespace ProgettoIngegneriaSoftware.UI
             Routing.RegisterRoute(nameof(EventsPage), typeof(EventsPage));
             Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
             Routing.RegisterRoute(nameof(RegisterPage), typeof(RegisterPage));
+            Routing.RegisterRoute(nameof(BookTicketsDetailView), typeof(BookTicketsDetailView));
+            Routing.RegisterRoute(nameof(BookedTicketsDetailView), typeof(BookedTicketsDetailView));
         }
     }
 }

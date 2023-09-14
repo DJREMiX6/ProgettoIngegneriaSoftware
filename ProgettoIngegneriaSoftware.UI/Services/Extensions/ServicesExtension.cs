@@ -34,6 +34,9 @@ internal static class ServicesExtension
             .AddApiHttpClientHandler()
             .AddCookiesService();
 
+    internal static IServiceCollection AddEventBookingService(this IServiceCollection services) =>
+        services.AddSingleton<IEventBookingService, EventBookingService>();
+
     internal static IServiceCollection AddJsonSerializerSettings(this IServiceCollection services) =>
         services.AddSingleton<JsonSerializerSettings, CustomJsonSerializerSettings.CustomJsonSerializerSettings>();
 

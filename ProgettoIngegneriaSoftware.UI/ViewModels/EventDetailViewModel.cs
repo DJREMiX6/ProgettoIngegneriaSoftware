@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using ProgettoIngegneriaSoftware.UI.Models;
 using ProgettoIngegneriaSoftware.UI.Models.Abstraction;
 using ProgettoIngegneriaSoftware.UI.Services.EventsService;
+using ProgettoIngegneriaSoftware.UI.Views;
 
 namespace ProgettoIngegneriaSoftware.UI.ViewModels;
 
@@ -25,25 +26,17 @@ public partial class EventDetailViewModel : BaseViewModel
     
     public async Task GetEventFromServiceAsync()
     {
-        try
-        {
-            var eventModel = await _eventsService.GetEventAsync(EventId);
+        var eventModel = await _eventsService.GetEventAsync(EventId);
 
-            if (eventModel == null)
-            {
-                await Shell.Current.GoToAsync("..");
-                await Shell.Current.DisplayAlert("Error!", "There was an error loading the Event.", "Ok");
-            }
-            else
-            {
-                EventModelToDetail = eventModel;
-            }
-        }
-        catch (Exception ex)
+        if (eventModel == null)
         {
-
+            await Shell.Current.GoToAsync("..");
+            await Shell.Current.DisplayAlert("Error!", "There was an error loading the Event.", "Ok");
         }
-        
+        else
+        {
+            EventModelToDetail = eventModel;
+        }
     }
 
     public async Task OnNavigatedTo()
@@ -51,6 +44,24 @@ public partial class EventDetailViewModel : BaseViewModel
         IsBusy = true;
         await GetEventFromServiceAsync();
         IsBusy = false;
+    }
+
+    [RelayCommand]
+    private async Task NavigateToBookTickets()
+    {
+        await Shell.Current.GoToAsync(nameof(BookTicketsDetailView), animate: true, new Dictionary<string, object>()
+        {
+            {"EventId", EventId}
+        });
+    }
+
+    [RelayCommand]
+    private async Task NavigateToBookedTickets()
+    {
+        await Shell.Current.GoToAsync(nameof(BookedTicketsDetailView), animate: true, new Dictionary<string, object>()
+        {
+            {"EventId", EventId}
+        });
     }
 
 }

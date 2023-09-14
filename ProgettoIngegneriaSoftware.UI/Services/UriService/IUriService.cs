@@ -21,4 +21,12 @@ public interface IUriService
 
     #endregion EVENTS
 
+    #region BOOKING
+
+    public string BookSeatPath(Guid eventId);
+
+    public string CancelBookedSeatPath(Guid eventId);
+
+    #endregion BOOKING
+
 }

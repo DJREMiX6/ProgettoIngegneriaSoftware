@@ -98,6 +98,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Views\BookedTicketsDetailView.xaml.cs">
+	    <DependentUpon>BookedTicketsDetailView.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\BookTicketsDetailView.xaml.cs">
+	    <DependentUpon>BookTicketsDetailView.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\LoginPage.xaml.cs">
 	    <DependentUpon>LoginPage.xaml</DependentUpon>
 	  </Compile>
@@ -125,6 +131,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Views\BookedTicketsDetailView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\QrCodeScanView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

@@ -17,11 +17,6 @@ public partial class EventDetailView : ContentPage
         InitializeComponent();
     }
 
-    public async Task LoadData()
-    {
-        await _viewModel.OnNavigatedTo();
-    }
-
     protected override void OnNavigatedTo(NavigatedToEventArgs args)
     {
         base.OnNavigatedTo(args);

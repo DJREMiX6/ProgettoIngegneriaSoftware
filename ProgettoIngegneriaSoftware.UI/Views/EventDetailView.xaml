@@ -14,7 +14,7 @@
                        BackgroundColor="White" >
                     <Grid Padding="0" 
                           ColumnDefinitions="*,*,*"
-                          RowDefinitions="200,*,50">
+                          RowDefinitions="200,*,*,50">
                         <Image Source="{Binding EventModelToDetail.ImageSource}"
                                HeightRequest="200"
                                Aspect="AspectFill"
@@ -22,8 +22,32 @@
                                Grid.ColumnSpan="3"
                                Grid.Row="0"/>
 
+                        <Grid ColumnDefinitions="*,*"
+                              RowDefinitions="50"
+                              Grid.ColumnSpan="3"
+                              Grid.Row ="1"
+                              Padding="5">
+
+                            <Button Text="Check Tickets"
+                                    IsEnabled="{Binding EventModelToDetail.IsBookedByCurrentUser}"
+                                    IsVisible="{Binding EventModelToDetail.IsBookedByCurrentUser}"
+                                    Grid.Row="0"
+                                    Grid.Column="0" 
+                                    Command="{Binding NavigateToBookedTicketsCommand}"
+                                    Margin="0,0,5,0"
+                                    FontSize="20"/>
+
+                            <Button Text="Book Tickets"
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Command="{Binding NavigateToBookTicketsCommand}"
+                                    FontSize="20">
+                            </Button>
+
+                        </Grid>
+
                         <VerticalStackLayout Grid.ColumnSpan="3" 
-                                             Grid.Row="1">
+                                             Grid.Row="2">
                             <Label Text="{Binding EventModelToDetail.Name}"
                                    LineBreakMode="WordWrap"
                                    FontSize="20"
@@ -47,7 +71,7 @@
                                FontSize="14"
                                FontAttributes="Bold"
                                TextColor="{StaticResource Primary}"
-                               Grid.Row="2"
+                               Grid.Row="3"
                                Grid.Column="0"
                                HorizontalOptions="Center"
                                VerticalOptions="Start"
@@ -58,14 +82,14 @@
                                HorizontalTextAlignment="Center"
                                VerticalTextAlignment="Center"
                                FontSize="10"
-                               Grid.Row="2"
+                               Grid.Row="3"
                                Grid.Column="0"
                                VerticalOptions="End"
                                HorizontalOptions="Center"
                                Margin="0,0,0,10"/>
 
                         <BoxView Color="{StaticResource Gray300}"
-                                 Grid.Row="2"
+                                 Grid.Row="3"
                                  Grid.Column="0"
                                  WidthRequest="1"
                                  Margin="0,3,0,3"
@@ -79,7 +103,7 @@
                         </BoxView>
 
                         <BoxView Color="{StaticResource Gray300}"
-                                 Grid.Row="2"
+                                 Grid.Row="3"
                                  Grid.Column="1"
                                  WidthRequest="1"
                                  Margin="0,3,0,3"
@@ -96,7 +120,7 @@
                                FontSize="14"
                                FontAttributes="Bold"
                                TextColor="{StaticResource Primary}"
-                               Grid.Row="2"
+                               Grid.Row="3"
                                Grid.Column="1"
                                HorizontalOptions="Center"
                                VerticalOptions="Start"
@@ -104,17 +128,18 @@
 
                         <Label Text="{Binding EventModelToDetail.Location}"
                                TextColor="{StaticResource Gray500}"
+                               LineBreakMode="TailTruncation"
                                HorizontalTextAlignment="Center"
                                VerticalTextAlignment="Center"
                                FontSize="10"
-                               Grid.Row="2"
+                               Grid.Row="3"
                                Grid.Column="1"
                                VerticalOptions="End"
                                HorizontalOptions="Center"
                                Margin="0,0,0,5"/>
 
                         <BoxView Color="{StaticResource Gray300}"
-                                 Grid.Row="2"
+                                 Grid.Row="3"
                                  Grid.Column="1"
                                  WidthRequest="1"
                                  Margin="0,3,0,3"
@@ -128,7 +153,7 @@
                         </BoxView>
 
                         <BoxView Color="{StaticResource Gray300}"
-                                 Grid.Row="2"
+                                 Grid.Row="3"
                                  Grid.Column="2"
                                  WidthRequest="1"
                                  Margin="0,3,0,3"
@@ -145,7 +170,7 @@
                                FontSize="14"
                                FontAttributes="Bold"
                                TextColor="{StaticResource Primary}"
-                               Grid.Row="2"
+                               Grid.Row="3"
                                Grid.Column="2"
                                HorizontalOptions="Center"
                                VerticalOptions="Start"
@@ -156,7 +181,7 @@
                                HorizontalTextAlignment="Center"
                                VerticalTextAlignment="Center"
                                FontSize="10"
-                               Grid.Row="2"
+                               Grid.Row="3"
                                Grid.Column="2"
                                VerticalOptions="End"
                                HorizontalOptions="Center"
