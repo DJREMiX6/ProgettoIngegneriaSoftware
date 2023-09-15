@@ -17,10 +17,14 @@
                         <DataTemplate x:DataType="models:ISeatResult">
 
                             <SwipeView>
-
                                 <SwipeView.LeftItems>
-                                    <SwipeItem Text="Remove"
-                                               BackgroundColor="Red"/>
+
+                                    <SwipeItems>
+                                        <SwipeItem Text="Delete"
+                                                   BackgroundColor="Red"
+                                                   Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:BookTicketsDetailViewModel}}, Path=RemoveSeatFromSelectedCommand}"
+                                                   CommandParameter="{Binding .}"/>
+                                    </SwipeItems>
 
                                 </SwipeView.LeftItems>
                                 <Frame CornerRadius="8"

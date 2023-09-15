@@ -145,6 +145,7 @@ public partial class BookTicketsDetailViewModel : BaseViewModel
         IsSeatIndexSelected = false;
 
         IsAddButtonEnabled = false;
+        SeatsSelected = false;
     }
 
     private void UpdateAddButtonState() =>
@@ -217,6 +218,17 @@ public partial class BookTicketsDetailViewModel : BaseViewModel
         {
 
         }
+    }
+
+    [RelayCommand]
+    private void RemoveSeatFromSelected(ISeatResult seat)
+    {
+        SelectedSeats.Remove(seat);
+        AvailableSeats.Add(seat);
+        
+        UpdateAvailableSeatZoneNames();
+        UpdateAvailableSeatRowNames();
+        UpdateAvailableSeatIndexes();
     }
 
     #endregion COMMANDS
