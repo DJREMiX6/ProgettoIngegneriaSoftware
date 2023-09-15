@@ -3,10 +3,138 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:ProgettoIngegneriaSoftware.UI.ViewModels"
+             xmlns:models="clr-namespace:ProgettoIngegneriaSoftware.Shared.Library.Models.Abstraction;assembly=ProgettoIngegneriaSoftware.Shared.Library"
              x:Class="ProgettoIngegneriaSoftware.UI.Views.BookedTicketsDetailView"
              x:DataType="viewmodels:BookedTicketsDetailViewModel"
-             Title="{Binding Title}">
+             Title="{Binding Title}"
+             Shell.PresentationMode="ModalAnimated">
     <ContentPage.Content>
-        
+        <ScrollView>
+            <CollectionView ItemsSource="{Binding BookedSeats}">
+              <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:ISeatResult">
+
+                  <SwipeView>
+                    <SwipeView.LeftItems>
+
+                      <SwipeItems>
+                        <SwipeItem Text="Remove"
+                                   BackgroundColor="Red"
+                                   Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:BookedTicketsDetailViewModel}}, Path=RemoveBookedSeatCommand}"
+                                   CommandParameter="{Binding .}"/>
+                      </SwipeItems>
+
+                    </SwipeView.LeftItems>
+                    <Frame CornerRadius="8"
+                           BackgroundColor="{StaticResource White}"
+                           BorderColor="{StaticResource White}"
+                           Margin="5"
+                           Padding="5">
+                      <Grid ColumnDefinitions="*,*,*"
+                            RowDefinitions="*,*">
+
+                        <Label Text="Zone"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource Primary}"
+                               Grid.Row="0"
+                               Grid.Column="0"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Start"
+                               Margin="0,2,0,0"/>
+
+                        <Label Text="{Binding SeatZoneName}"
+                               TextColor="{StaticResource Gray500}"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               FontSize="10"
+                               Grid.Row="1"
+                               Grid.Column="0"
+                               VerticalOptions="End"
+                               HorizontalOptions="Center"
+                               Margin="0,0,0,10"/>
+
+                        <BoxView Color="{StaticResource Gray300}"
+                                 Grid.Row="0"
+                                 Grid.RowSpan="2"
+                                 Grid.Column="0"
+                                 WidthRequest="1"
+                                 Margin="0,3,0,3"
+                                 HorizontalOptions="End">
+                          <BoxView.Shadow>
+                            <Shadow Brush="{StaticResource BlackBrush}"
+                                    Radius="10"
+                                    Opacity=".25"
+                                    Offset="0,-2" />
+                          </BoxView.Shadow>
+                        </BoxView>
+
+                        <Label Text="Row"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource Primary}"
+                               Grid.Row="0"
+                               Grid.Column="1"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Start"
+                               Margin="0,2,0,0"/>
+
+                        <Label Text="{Binding SeatRowName}"
+                               TextColor="{StaticResource Gray500}"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               FontSize="10"
+                               Grid.Row="1"
+                               Grid.Column="1"
+                               VerticalOptions="End"
+                               HorizontalOptions="Center"
+                               Margin="0,0,0,10"/>
+
+                        <BoxView Color="{StaticResource Gray300}"
+                                 Grid.Row="0"
+                                 Grid.RowSpan="2"
+                                 Grid.Column="1"
+                                 WidthRequest="1"
+                                 Margin="0,3,0,3"
+                                 HorizontalOptions="End">
+                          <BoxView.Shadow>
+                            <Shadow Brush="{StaticResource BlackBrush}"
+                                    Radius="10"
+                                    Opacity=".25"
+                                    Offset="0,-2" />
+                          </BoxView.Shadow>
+                        </BoxView>
+
+                        <Label Text="Seat"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource Primary}"
+                               Grid.Row="0"
+                               Grid.Column="2"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Start"
+                               Margin="0,2,0,0"/>
+
+                        <Label Text="{Binding SeatIndex}"
+                               TextColor="{StaticResource Gray500}"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               FontSize="10"
+                               Grid.Row="1"
+                               Grid.Column="2"
+                               VerticalOptions="End"
+                               HorizontalOptions="Center"
+                               Margin="0,0,0,10"/>
+
+                      </Grid>
+
+                    </Frame>
+
+                  </SwipeView>
+
+                </DataTemplate>
+              </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
     </ContentPage.Content>
 </ContentPage>

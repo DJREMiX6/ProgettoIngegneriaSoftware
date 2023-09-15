@@ -206,6 +206,42 @@ public class ApiHttpClient : HttpClient
         }
     }
 
+    public async Task CancelBookedSeats(Guid eventId, ICollection<Guid> seatIds)
+    {
+        var uri = _uriService.CancelBookedSeatPath(eventId);
+        var httpResponseMessage = await this.PatchAsJsonAsync(uri, seatIds);
+
+        if (httpResponseMessage.IsSuccessStatusCode)
+            return;
+
+        switch (httpResponseMessage.StatusCode)
+        {
+            case HttpStatusCode.Unauthorized:
+            {
+                var problemDetails = await httpResponseMessage.ReadProblemDetailsAsync();
+                throw new UnauthorizedApiException(string.IsNullOrWhiteSpace(problemDetails?.Detail)
+                    ? problemDetails?.Title
+                    : problemDetails?.Detail);
+            }
+            case HttpStatusCode.BadRequest:
+            {
+                var problemDetails = await httpResponseMessage.ReadProblemDetailsAsync();
+                throw new BadRequestApiException(string.IsNullOrWhiteSpace(problemDetails?.Detail)
+                    ? problemDetails?.Title
+                    : problemDetails?.Detail);
+            }
+            case HttpStatusCode.NotFound:
+            {
+                var problemDetails = await httpResponseMessage.ReadProblemDetailsAsync();
+                throw new NotFoundApiException(string.IsNullOrWhiteSpace(problemDetails?.Detail)
+                    ? problemDetails?.Title
+                    : problemDetails?.Detail);
+            }
+            default:
+                throw new ArgumentException($"Unexpected error! Status code: {httpResponseMessage.StatusCode}.", nameof(httpResponseMessage.StatusCode));
+        }
+    }
+
     #endregion BOOKING
 
 }

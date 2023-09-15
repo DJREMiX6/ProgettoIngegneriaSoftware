@@ -145,7 +145,6 @@ public partial class BookTicketsDetailViewModel : BaseViewModel
         IsSeatIndexSelected = false;
 
         IsAddButtonEnabled = false;
-        SeatsSelected = false;
     }
 
     private void UpdateAddButtonState() =>

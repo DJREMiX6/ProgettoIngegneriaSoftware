@@ -27,4 +27,14 @@ public partial class BookedTicketsDetailView : ContentPage
 
     #endregion CTORS
 
+    #region METHODS
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+        Dispatcher.DispatchAsync(async () => await _viewModel.OnNavigatedTo());
+    }
+
+    #endregion METHODS
+
 }

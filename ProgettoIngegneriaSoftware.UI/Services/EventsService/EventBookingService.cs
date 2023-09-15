@@ -21,6 +21,8 @@ public class EventBookingService : IEventBookingService
 
     public async Task BookTicket(Guid eventId, ICollection<Guid> seatIds) => await _apiHttpClient.BookEvent(eventId, seatIds);
 
+    public async Task CancelBookedTickets(Guid eventId, params Guid[] seatIds) => await _apiHttpClient.CancelBookedSeats(eventId, seatIds);
+
     #endregion IEventBookingService IMPLEMENTATION
 
 }
