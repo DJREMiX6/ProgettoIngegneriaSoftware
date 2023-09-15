@@ -14,7 +14,7 @@
                        BackgroundColor="White" >
                     <Grid Padding="0" 
                           ColumnDefinitions="*,*,*"
-                          RowDefinitions="200,*,*,50">
+                          RowDefinitions="200,50,*,50">
                         <Image Source="{Binding EventModelToDetail.ImageSource}"
                                HeightRequest="200"
                                Aspect="AspectFill"
