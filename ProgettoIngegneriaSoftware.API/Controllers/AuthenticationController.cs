@@ -140,7 +140,7 @@ public class AuthenticationController : ControllerBase
     [HttpPost("signout", Name = "SignOut")]
     public new async Task<IActionResult> SignOut()
     {
-        if (_authenticationService.IsUserAuthenticated(HttpContext))
+        if (!_authenticationService.IsUserAuthenticated(HttpContext))
             return Unauthorized(new ProblemDetails()
             {
                 Title = "Authentication error.",
