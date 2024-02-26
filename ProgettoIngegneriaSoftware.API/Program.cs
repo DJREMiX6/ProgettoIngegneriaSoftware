@@ -45,7 +45,7 @@ using (var scope = app.Services.CreateScope())
     if(attempts > maxAttempts && !migrated)
     {
         logger.LogError("Max attempts reached. Shutting down.");
-        return -1;
+        Environment.Exit(-1);
     }
     if(migrated)
         logger.LogInformation("Migration successful.");
