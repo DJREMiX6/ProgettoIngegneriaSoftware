@@ -1,7 +1,8 @@
 version: '3.4'
+name: progetto-ingegneria-software
 
 services:
-  
+
   progetto-ingegneria-software-sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: PIS_SqlServer
@@ -15,12 +16,13 @@ services:
     networks:
       - progetto-ingegneria-software-network
     ports:
-      - "1433:1433"
+      - "1455:1433"
 
   progetto-ingegneria-software-server:
     build:
       context: ./
       dockerfile: Dockerfile.Server
+    image: pis-image
     depends_on:
       - progetto-ingegneria-software-sqlserver
     container_name: PIS_Server
