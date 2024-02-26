@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		compose.yaml = compose.yaml
 		Dockerfile.Server = Dockerfile.Server
+		ProgettoIngegneriaSoftware.postman_collection.json = ProgettoIngegneriaSoftware.postman_collection.json
 		ProgettoIngegneriaSoftwareDatabaseContent.bacpac = ProgettoIngegneriaSoftwareDatabaseContent.bacpac
 		start-server.bat = start-server.bat
 	EndProjectSection
