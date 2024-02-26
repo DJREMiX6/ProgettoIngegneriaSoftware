@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgettoIngegneriaSoftware.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3A2F43E2-C920-4B97-94B6-8CCC1C5460EF}"
 	ProjectSection(SolutionItems) = preProject
+		compose.yaml = compose.yaml
+		Dockerfile.Server = Dockerfile.Server
 		ProgettoIngegneriaSoftwareDatabaseContent.bacpac = ProgettoIngegneriaSoftwareDatabaseContent.bacpac
 		start-server.bat = start-server.bat
 	EndProjectSection
@@ -19,6 +21,8 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		Server-side Release|Any CPU = Server-side Release|Any CPU
+		ServerSideRelease|Any CPU = ServerSideRelease|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{724A99C6-429D-4974-AE81-2908C1467232}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -27,14 +31,24 @@ Global
 		{724A99C6-429D-4974-AE81-2908C1467232}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{724A99C6-429D-4974-AE81-2908C1467232}.Release|Any CPU.Build.0 = Release|Any CPU
 		{724A99C6-429D-4974-AE81-2908C1467232}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{724A99C6-429D-4974-AE81-2908C1467232}.Server-side Release|Any CPU.ActiveCfg = Server-side Release|Any CPU
+		{724A99C6-429D-4974-AE81-2908C1467232}.ServerSideRelease|Any CPU.ActiveCfg = ServerSideRelease|Any CPU
 		{FAD5D79E-3C1C-4B04-B1DF-C124D1B6A1DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FAD5D79E-3C1C-4B04-B1DF-C124D1B6A1DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAD5D79E-3C1C-4B04-B1DF-C124D1B6A1DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAD5D79E-3C1C-4B04-B1DF-C124D1B6A1DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAD5D79E-3C1C-4B04-B1DF-C124D1B6A1DA}.Server-side Release|Any CPU.ActiveCfg = Server-side Release|Any CPU
+		{FAD5D79E-3C1C-4B04-B1DF-C124D1B6A1DA}.Server-side Release|Any CPU.Build.0 = Server-side Release|Any CPU
+		{FAD5D79E-3C1C-4B04-B1DF-C124D1B6A1DA}.ServerSideRelease|Any CPU.ActiveCfg = ServerSideRelease|Any CPU
+		{FAD5D79E-3C1C-4B04-B1DF-C124D1B6A1DA}.ServerSideRelease|Any CPU.Build.0 = ServerSideRelease|Any CPU
 		{3CE0C7C6-44B0-4FB0-9B3E-8DAA9360DAAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3CE0C7C6-44B0-4FB0-9B3E-8DAA9360DAAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3CE0C7C6-44B0-4FB0-9B3E-8DAA9360DAAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3CE0C7C6-44B0-4FB0-9B3E-8DAA9360DAAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CE0C7C6-44B0-4FB0-9B3E-8DAA9360DAAE}.Server-side Release|Any CPU.ActiveCfg = Server-side Release|Any CPU
+		{3CE0C7C6-44B0-4FB0-9B3E-8DAA9360DAAE}.Server-side Release|Any CPU.Build.0 = Server-side Release|Any CPU
+		{3CE0C7C6-44B0-4FB0-9B3E-8DAA9360DAAE}.ServerSideRelease|Any CPU.ActiveCfg = ServerSideRelease|Any CPU
+		{3CE0C7C6-44B0-4FB0-9B3E-8DAA9360DAAE}.ServerSideRelease|Any CPU.Build.0 = ServerSideRelease|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,16 @@
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
+WORKDIR /app
+
+COPY *.sln .
+COPY ProgettoIngegneriaSoftware.Shared.Library/*.csproj ./ProgettoIngegneriaSoftware.Shared.Library/
+COPY ProgettoIngegneriaSoftware.API/*.csproj ./ProgettoIngegneriaSoftware.API/
+RUN dotnet restore ./ProgettoIngegneriaSoftware.Shared.Library/ProgettoIngegneriaSoftware.Shared.Library.csproj
+RUN dotnet restore ./ProgettoIngegneriaSoftware.API/ProgettoIngegneriaSoftware.API.csproj
+
+COPY . ./
+RUN dotnet publish -c ServerSideRelease -o out
+
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS runtime
+WORKDIR /app
+COPY --from=build-env /app/out .
+ENTRYPOINT ["dotnet", "ProgettoIngegneriaSoftware.API.dll"]

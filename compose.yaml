@@ -1,0 +1,39 @@
+version: '3.4'
+
+services:
+  
+  progetto-ingegneria-software-sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: PIS_SqlServer
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Developer
+      - MSSQL_SA_PASSWORD=PIS_SA_Password_1972
+    restart: always
+    volumes:
+      - database:/var/opt/sqlserver/data
+    networks:
+      - progetto-ingegneria-software-network
+    ports:
+      - "1433:1433"
+
+  progetto-ingegneria-software-server:
+    build:
+      context: ./
+      dockerfile: Dockerfile.Server
+    depends_on:
+      - progetto-ingegneria-software-sqlserver
+    container_name: PIS_Server
+    networks:
+      - progetto-ingegneria-software-network
+    ports:
+      - "5000:80"
+
+volumes:
+  database:
+
+networks:
+  progetto-ingegneria-software-network:
+    driver: bridge
+    attachable: true
+    name: PIS-network
