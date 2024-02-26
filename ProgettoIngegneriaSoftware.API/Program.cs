@@ -1,3 +1,4 @@
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using ProgettoIngegneriaSoftware.API;
 using ProgettoIngegneriaSoftware.API.Extensions;
@@ -15,7 +16,40 @@ var app = builder.Build();
 
 //Ensure Database creation before starting the application
 using (var scope = app.Services.CreateScope())
-    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database;
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+    var migrated = false;
+    var attempts = 0;
+    var maxAttempts = 3;
+    
+    while(!migrated || attempts < maxAttempts)
+    {
+        try
+        {
+            attempts++;
+            logger.LogInformation("Attempting to migrate the Database. Attempt {attempts}/{maxAttempts}", attempts, maxAttempts);
+            db.Migrate();
+            migrated = true;
+        }
+        catch (SqlException)
+        {
+            logger.LogError("Migration failed. Attempt {attempts}/{maxAttempts}", attempts, maxAttempts);
+            logger.LogInformation("Waiting 10s for a new attempt.");
+            migrated = false;
+            Thread.Sleep(10_000);
+        }
+    }
+
+    if(attempts > maxAttempts && !migrated)
+    {
+        logger.LogError("Max attempts reached. Shutting down.");
+        return -1;
+    }
+    if(migrated)
+        logger.LogInformation("Migration successful.");
+}
 
 if (app.Environment.IsDevelopment())
 {
