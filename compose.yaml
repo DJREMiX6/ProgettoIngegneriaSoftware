@@ -12,7 +12,7 @@ services:
       - MSSQL_SA_PASSWORD=PIS_SA_Password_1972
     restart: always
     volumes:
-      - database:/var/opt/sqlserver/data
+      - database:/var/opt/mssql
     networks:
       - progetto-ingegneria-software-network
     ports:
